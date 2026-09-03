@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.chauffeur_hub"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
