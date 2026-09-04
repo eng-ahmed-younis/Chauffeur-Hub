@@ -18,6 +18,215 @@
 
 ---
 
+## 📁 Project Structure & File Map
+
+```text
+lib/
+├── app/
+│   ├── config/
+│   │   ├── app_environment.dart        # Environment configuration & defines
+│   │   └── app_flavor.dart             # Build flavor enum & settings
+│   └── ChauffeurApp.dart               # Root MaterialApp.router widget with ScreenUtil
+├── core/
+│   ├── constants/
+│   │   └── app_settings_constants.dart  # App constants & key-value settings
+│   ├── services/
+│   │   ├── di/
+│   │   │   ├── core/
+│   │   │   │   └── core_injection.dart  # DI module for core dependencies
+│   │   │   ├── navigation/
+│   │   │   │   └── navigation_injection.dart # DI module for GoRouter
+│   │   │   ├── repo/
+│   │   │   │   └── repo_injection.dart  # DI module for repositories
+│   │   │   └── service_locator.dart    # Main GetIt configuration & initialization
+│   │   ├── navigation/
+│   │   │   ├── app_pages.dart          # GoRoute definitions & path bindings
+│   │   │   ├── app_router.dart         # GoRouter instance & session guard logic
+│   │   │   └── app_routes.dart         # Type-safe route string constants & builders
+│   │   └── network/
+│   │       ├── base/
+│   │       │   ├── api_exception.dart  # Sealed ApiException hierarchy
+│   │       │   ├── api_response.dart   # Generic ApiResponse<T> wrapper
+│   │       │   ├── device_metadata.dart# Platform metadata & shortestSide calculation
+│   │       │   └── error_message.dart  # Readable error message handler
+│   │       ├── dio_factory.dart        # Dio HTTP client factory & interceptors
+│   │       └── network_injection.dart  # DI module for Dio & network dependencies
+│   ├── storage/
+│   │   ├── session_controller.dart     # Reactive auth state manager (ChangeNotifier)
+│   │   └── session_store.dart          # Encrypted & local preference session storage
+│   └── utils/
+│       └── extentions/
+│           └── http_check.dart         # HttpCheck & NullableHttpCheck status extensions
+├── features/
+│   ├── auth/
+│   │   └── presentation/
+│   │       └── screens/
+│   │           └── login/
+│   │               └── login.screen.dart # Chauffeur login screen UI
+│   └── splash/
+│       ├── data/
+│       │   └── models/
+│       │       ├── app_info.dart       # App info data model
+│       │       ├── app_settings.dart   # App settings model
+│       │       └── setting_item.dart   # Setting item model
+│       └── presentation/
+│           ├── bloc/
+│           │   ├── splash_bloc.dart    # Splash screen state management BLoC
+│           │   ├── splash_event.dart   # Splash BLoC events
+│           │   └── splash_state.dart   # Splash BLoC states
+│           └── screens/
+│               └── splash_screen.dart  # Animated splash screen UI
+└── main.dart                           # App entrypoint & SystemChrome initialization
+```
+
+---
+
+## 🏗️ System Architecture Diagrams
+
+### 1. High-Level Architecture & Flow
+
+```mermaid
+graph TD
+    classDef ui fill:#131952,stroke:#D4AF37,stroke-width:2px,color:#FFFFFF;
+    classDef core fill:#0B132B,stroke:#4A90E2,stroke-width:2px,color:#FFFFFF;
+    classDef net fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
+    classDef storage fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
+
+    subgraph AppEntry ["App Entry & Environment"]
+        main["main()"] ::: core
+        ChauffeurApp["ChauffeurApp Widget"] ::: ui
+        AppEnvironment["AppEnvironment"] ::: core
+    end
+
+    subgraph NavigationLayer ["Navigation & Router"]
+        GoRouter["GoRouter"] ::: ui
+        AppPages["AppPages"] ::: ui
+        AppRoutes["AppRoutes"] ::: ui
+    end
+
+    subgraph PresentationLayer ["Presentation Layer (UI & State)"]
+        SplashScreen["SplashScreen"] ::: ui
+        SplashBloc["SplashBloc"] ::: ui
+        LoginScreen["LoginScreen"] ::: ui
+        AuthBloc["AuthBloc / Cubit"] ::: ui
+    end
+
+    subgraph SessionStorageLayer ["Session & Local Storage"]
+        SessionController["SessionController (ChangeNotifier)"] ::: storage
+        SessionStore["SessionStore"] ::: storage
+        SecureStorage["FlutterSecureStorage"] ::: storage
+        SharedPrefs["SharedPreferencesAsync"] ::: storage
+    end
+
+    subgraph NetworkLayer ["Network Infrastructure"]
+        DioFactory["DioFactory"] ::: net
+        DioInstance["Dio HTTP Client"] ::: net
+        Connectivity["Connectivity (ConnectivityPlus)"] ::: net
+        DeviceMetadata["DeviceMetadata"] ::: net
+        ApiResponse["ApiResponse&lt;T&gt;"] ::: net
+        ApiException["ApiException (Sealed Hierarchy)"] ::: net
+        HttpCheck["HttpCheck Extensions"] ::: net
+    end
+
+    subgraph ServiceLocator ["Dependency Injection (GetIt)"]
+        configureDependencies["configureDependencies()"] ::: core
+        serviceLocator["GetIt serviceLocator"] ::: core
+    end
+
+    %% Interactions & Data Flow
+    main --> configureDependencies
+    main --> ChauffeurApp
+    configureDependencies --> serviceLocator
+    ChauffeurApp --> GoRouter
+
+    GoRouter --> AppPages
+    AppPages --> AppRoutes
+    GoRouter -. "Re-evaluates routes on auth change" .-> SessionController
+
+    SplashScreen --> SplashBloc
+    SplashBloc --> SessionController
+    LoginScreen --> AuthBloc
+    AuthBloc --> SessionController
+
+    SessionController --> SessionStore
+    SessionStore --> SecureStorage
+    SessionStore --> SharedPrefs
+
+    DioFactory --> DioInstance
+    DioFactory --> AppEnvironment
+    DioFactory --> SessionController
+    DioFactory --> Connectivity
+    DioFactory --> DeviceMetadata
+
+    DioInstance --> ApiResponse
+    ApiResponse -. "Throws on failure" .-> ApiException
+    DioInstance -. "Evaluates status codes" .-> HttpCheck
+```
+
+---
+
+### 2. Core Network & Exception Class Diagram
+
+```mermaid
+classDiagram
+    class SessionController {
+        -SessionStore _store
+        -String? _token
+        -bool _isReady
+        +bool isReady
+        +bool isAuthenticated
+        +String? token
+        +restore() Future~void~
+        +establish(token, accountCode, driverName) Future~void~
+        +signOut() Future~void~
+    }
+
+    class DioFactory {
+        -AppEnvironment _environment
+        -SessionController _session
+        -Connectivity _connectivity
+        -DeviceMetadata _deviceMetadata
+    }
+
+    class ApiResponse~T~ {
+        +int? code
+        +int? statusCode
+        +String? message
+        +T? result
+        +requireSuccessfulResult() T
+        +ensureSuccessful() void
+    }
+
+    class ApiException {
+        <<sealed>>
+        +String message
+        +int? statusCode
+    }
+
+    class NetworkUnavailableException {
+    }
+
+    class UnauthorizedException {
+    }
+
+    class ServerApiException {
+    }
+
+    class InvalidResponseException {
+    }
+
+    ApiException <|-- NetworkUnavailableException
+    ApiException <|-- UnauthorizedException
+    ApiException <|-- ServerApiException
+    ApiException <|-- InvalidResponseException
+
+    DioFactory --> SessionController : attaches auth header
+    DioFactory --> DeviceMetadata : passes device metadata
+    ApiResponse ..> ApiException : throws on failure
+```
+
+---
+
 ## 🛠️ Tech Stack & Architecture
 
 - **Framework**: Flutter (`^3.13.2`) / Dart
@@ -29,29 +238,6 @@
 - **Network Monitoring**: `connectivity_plus` (`^7.3.1`)
 - **Storage**: `flutter_secure_storage` (`^11.0.0`) & `shared_preferences` (`^2.5.5`)
 - **Device & Package Info**: `package_info_plus` & `device_info_plus`
-
----
-
-## 📁 Project Structure
-
-```text
-lib/
-├── app/                  # App entrypoint, theme, and environment configuration
-│   └── config/           # Environment definitions (AppEnvironment)
-├── core/                 # Shared core utilities, services, network, storage, theme
-│   ├── services/
-│   │   ├── di/           # Service locators (initCoreModule, initNetworkModule, etc.)
-│   │   ├── navigation/   # GoRouter configuration (AppRouter, AppRoutes, AppPages)
-│   │   └── network/      # Network infrastructure & Dio factory
-│   │       ├── base/     # ApiResponse<T>, ApiException hierarchy, DeviceMetadata
-│   │       └── dio_factory.dart
-│   ├── storage/          # Session management (SessionController, SessionStore)
-│   └── utils/
-│       └── extentions/   # HttpCheck extensions on int / int?
-└── features/             # Feature-based modules (Clean Architecture)
-    ├── auth/             # Authentication (Login, OTP, Password Reset)
-    └── splash/           # Splash screen and initialization logic (SplashBloc)
-```
 
 ---
 
