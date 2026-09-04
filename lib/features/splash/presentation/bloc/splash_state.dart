@@ -1,62 +1,68 @@
-import 'package:equatable/equatable.dart';
+import '../../domain/models/splash_models.dart';
 
-import '../../data/models/app_info.dart';
-import '../../data/models/app_settings.dart';
+enum SplashDestination { login, home, currentTrip }
 
-/// State object representing the UI state for the Splash screen.
-///
-/// Holds immutable properties for initialization status, app settings, version update checks, and errors.
-class SplashState extends Equatable {
-  /// Default constructor for [SplashState].
+enum SplashEffect { none, navigate, showError, openUpdateUrl }
+
+final class SplashState {
   const SplashState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.settings,
-    this.appInfo,
-    this.errorMessage,
-    this.isForceUpdate,
+    this.updateType,
+    this.destination,
+    this.errorMessage = '',
+    this.effect = SplashEffect.none,
+    this.effectId = 0,
   });
 
-  /// Indicates whether the app startup initialization is in progress.
   final bool isLoading;
-
-  /// System settings loaded from backend during app launch.
   final AppSettings? settings;
+  final AppUpdateType? updateType;
+  final SplashDestination? destination;
+  final String errorMessage;
+  final SplashEffect effect;
+  final int effectId;
 
-  /// Application version and update metadata.
-  final AppInfo? appInfo;
-
-  /// Human-readable error message if initialization fails.
-  final String? errorMessage;
-
-  /// Flags whether a critical force update is required before using the app.
-  final bool? isForceUpdate;
-
-  /// Creates a copy of [SplashState] with updated field values.
   SplashState copyWith({
     bool? isLoading,
     AppSettings? settings,
-    AppInfo? appInfo,
+    AppUpdateType? updateType,
+    SplashDestination? destination,
     String? errorMessage,
-    bool? isForceUpdate,
+    SplashEffect? effect,
+    int? effectId,
   }) {
     return SplashState(
       isLoading: isLoading ?? this.isLoading,
       settings: settings ?? this.settings,
-      appInfo: appInfo ?? this.appInfo,
+      updateType: updateType ?? this.updateType,
+      destination: destination ?? this.destination,
       errorMessage: errorMessage ?? this.errorMessage,
-      isForceUpdate: isForceUpdate ?? this.isForceUpdate,
+      effect: effect ?? this.effect,
+      effectId: effectId ?? this.effectId,
     );
   }
 
-
-  //This ensures BlocBuilder and BlocListener will only trigger rebuilds when one of these
-  // properties actually changes. Let me know if you need any additional adjustments!
   @override
-  List<Object?> get props => [
-        isLoading,
-        settings,
-        appInfo,
-        errorMessage,
-        isForceUpdate,
-      ];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SplashState &&
+          runtimeType == other.runtimeType &&
+          isLoading == other.isLoading &&
+          settings == other.settings &&
+          updateType == other.updateType &&
+          destination == other.destination &&
+          errorMessage == other.errorMessage &&
+          effect == other.effect &&
+          effectId == other.effectId;
+
+  @override
+  int get hashCode =>
+      isLoading.hashCode ^
+      settings.hashCode ^
+      updateType.hashCode ^
+      destination.hashCode ^
+      errorMessage.hashCode ^
+      effect.hashCode ^
+      effectId.hashCode;
 }

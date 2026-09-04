@@ -1,12 +1,23 @@
-import 'package:equatable/equatable.dart';
-
-abstract class SplashEvent extends Equatable {
+sealed class SplashEvent {
   const SplashEvent();
-
-  @override
-  List<Object?> get props => [];
+  const factory SplashEvent.started() = SplashStarted;
+  const factory SplashEvent.updatePressed() = SplashUpdatePressed;
+  const factory SplashEvent.updateLaterPressed() = SplashUpdateLaterPressed;
+  const factory SplashEvent.errorDismissed() = SplashErrorDismissed;
 }
 
-class SplashInitializeRequested extends SplashEvent {
-  const SplashInitializeRequested();
+final class SplashStarted extends SplashEvent {
+  const SplashStarted();
+}
+
+final class SplashUpdatePressed extends SplashEvent {
+  const SplashUpdatePressed();
+}
+
+final class SplashUpdateLaterPressed extends SplashEvent {
+  const SplashUpdateLaterPressed();
+}
+
+final class SplashErrorDismissed extends SplashEvent {
+  const SplashErrorDismissed();
 }
