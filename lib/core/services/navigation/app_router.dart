@@ -1,14 +1,13 @@
-import 'package:chauffeur_hub/features/splash/presentation/screens/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../storage/session_controller.dart';
+import 'app_pages.dart';
 import 'app_routes.dart';
 
 GoRouter createAppRouter(SessionController session) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: session,
-    //state (GoRouterState): An object provided by GoRouter containing information about the current navigation event.
     redirect: (context, state) {
       final path = state.uri.path;
 
@@ -17,23 +16,23 @@ GoRouter createAppRouter(SessionController session) {
         return path == AppRoutes.splash ? null : AppRoutes.splash;
       }
 
-      // 2. If authenticated and trying to access auth pages, redirect to /home
+      // 2. Once session is ready, redirect away from /splash
+      if (path == AppRoutes.splash) {
+        return session.isAuthenticated ? AppRoutes.home : AppRoutes.login;
+      }
+
+      // 3. If authenticated and trying to access auth pages, redirect to /home
       if (session.isAuthenticated && AppRoutes.isAuthPath(path)) {
         return AppRoutes.home;
       }
 
-      // 3. If unauthenticated and trying to access protected pages, redirect to /login
+      // 4. If unauthenticated and trying to access protected pages, redirect to /login
       if (!session.isAuthenticated && AppRoutes.isProtectedPath(path)) {
         return AppRoutes.login;
       }
 
       return null;
     },
-    routes: [
-      GoRoute(
-        path: AppRoutes.splash,
-        builder: (context, state) => const SplashScreen(),
-      )
-    ],
+    routes: AppPages.routes(session),
   );
 }

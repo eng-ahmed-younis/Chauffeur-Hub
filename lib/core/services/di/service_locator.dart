@@ -1,8 +1,8 @@
 import 'package:get_it/get_it.dart';
 
+import '../network/network_injection.dart';
 import 'core/core_injection.dart';
 import 'navigation/navigation_injection.dart';
-import 'network/network_injection.dart';
 import 'repo/repo_injection.dart';
 
 final GetIt serviceLocator = GetIt.instance;

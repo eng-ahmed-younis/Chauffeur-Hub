@@ -33,14 +33,21 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  get_it: ^8.0.2
+  cupertino_icons: ^1.0.9
+  get_it: ^9.2.1
   flutter_screenutil: ^5.9.3
   flutter_secure_storage: ^11.0.0
   shared_preferences: ^2.5.5
   go_router: ^18.0.1
-  dio: ^5.11.0
+  dio: ^5.11.1
   pretty_dio_logger: ^1.4.0
+  flutter_native_splash: ^2.4.8
+  webase_chucker: ^0.1.4
+  flutter_bloc: ^9.1.1
+  equatable: ^2.1.0
+  package_info_plus: ^10.2.1
+  device_info_plus: ^13.2.0
+  connectivity_plus: ^7.3.1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +82,19 @@ package_rename_config:
     app_name: "Chauffeur Hub"
     bundle_name: "Chauffeur Hub"
     package_name: "com.example.chauffeurhub"
+
+
+
+flutter_native_splash:
+  color: "#111111"
+
+  android: true
+  ios: true
+
+  android_12:
+    color: "#111111"
+    image: assets/images/logo/blank.png
+    icon_background_color: "#111111"
 
 
 # For information on the generic Dart part of this file, see the

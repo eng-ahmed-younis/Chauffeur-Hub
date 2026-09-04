@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:webase_chucker/webase_chucker.dart';
 
 void initNetworkModule(GetIt serviceLocator) {
   final dio = Dio(
@@ -24,6 +26,8 @@ void initNetworkModule(GetIt serviceLocator) {
       compact: true,
     ),
   );
+
+  dio.interceptors.add(WebaseChucker.interceptor);
 
   serviceLocator.registerLazySingleton<Dio>(() => dio);
 }
