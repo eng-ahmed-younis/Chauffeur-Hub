@@ -87,55 +87,50 @@ lib/
 
 ```mermaid
 graph TD
-    classDef ui fill:#131952,stroke:#D4AF37,stroke-width:2px,color:#FFFFFF;
-    classDef core fill:#0B132B,stroke:#4A90E2,stroke-width:2px,color:#FFFFFF;
-    classDef net fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
-    classDef storage fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
-
     subgraph AppEntry ["App Entry & Environment"]
-        main["main()"] ::: core
-        ChauffeurApp["ChauffeurApp Widget"] ::: ui
-        AppEnvironment["AppEnvironment"] ::: core
+        mainNode["main()"]
+        ChauffeurApp["ChauffeurApp Widget"]
+        AppEnvironment["AppEnvironment"]
     end
 
     subgraph NavigationLayer ["Navigation & Router"]
-        GoRouter["GoRouter"] ::: ui
-        AppPages["AppPages"] ::: ui
-        AppRoutes["AppRoutes"] ::: ui
+        GoRouter["GoRouter"]
+        AppPages["AppPages"]
+        AppRoutes["AppRoutes"]
     end
 
     subgraph PresentationLayer ["Presentation Layer (UI & State)"]
-        SplashScreen["SplashScreen"] ::: ui
-        SplashBloc["SplashBloc"] ::: ui
-        LoginScreen["LoginScreen"] ::: ui
-        AuthBloc["AuthBloc / Cubit"] ::: ui
+        SplashScreen["SplashScreen"]
+        SplashBloc["SplashBloc"]
+        LoginScreen["LoginScreen"]
+        AuthBloc["AuthBloc / Cubit"]
     end
 
     subgraph SessionStorageLayer ["Session & Local Storage"]
-        SessionController["SessionController (ChangeNotifier)"] ::: storage
-        SessionStore["SessionStore"] ::: storage
-        SecureStorage["FlutterSecureStorage"] ::: storage
-        SharedPrefs["SharedPreferencesAsync"] ::: storage
+        SessionController["SessionController (ChangeNotifier)"]
+        SessionStore["SessionStore"]
+        SecureStorage["FlutterSecureStorage"]
+        SharedPrefs["SharedPreferencesAsync"]
     end
 
     subgraph NetworkLayer ["Network Infrastructure"]
-        DioFactory["DioFactory"] ::: net
-        DioInstance["Dio HTTP Client"] ::: net
-        Connectivity["Connectivity (ConnectivityPlus)"] ::: net
-        DeviceMetadata["DeviceMetadata"] ::: net
-        ApiResponse["ApiResponse&lt;T&gt;"] ::: net
-        ApiException["ApiException (Sealed Hierarchy)"] ::: net
-        HttpCheck["HttpCheck Extensions"] ::: net
+        DioFactory["DioFactory"]
+        DioInstance["Dio HTTP Client"]
+        Connectivity["Connectivity (ConnectivityPlus)"]
+        DeviceMetadata["DeviceMetadata"]
+        ApiResponse["ApiResponse"]
+        ApiException["ApiException (Sealed Hierarchy)"]
+        HttpCheck["HttpCheck Extensions"]
     end
 
     subgraph ServiceLocator ["Dependency Injection (GetIt)"]
-        configureDependencies["configureDependencies()"] ::: core
-        serviceLocator["GetIt serviceLocator"] ::: core
+        configureDependencies["configureDependencies()"]
+        serviceLocator["GetIt serviceLocator"]
     end
 
     %% Interactions & Data Flow
-    main --> configureDependencies
-    main --> ChauffeurApp
+    mainNode --> configureDependencies
+    mainNode --> ChauffeurApp
     configureDependencies --> serviceLocator
     ChauffeurApp --> GoRouter
 
@@ -161,6 +156,17 @@ graph TD
     DioInstance --> ApiResponse
     ApiResponse -. "Throws on failure" .-> ApiException
     DioInstance -. "Evaluates status codes" .-> HttpCheck
+
+    %% Styling Definitions
+    classDef ui fill:#131952,stroke:#D4AF37,stroke-width:2px,color:#FFFFFF;
+    classDef core fill:#0B132B,stroke:#4A90E2,stroke-width:2px,color:#FFFFFF;
+    classDef net fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
+    classDef storage fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
+
+    class ChauffeurApp,GoRouter,AppPages,AppRoutes,SplashScreen,SplashBloc,LoginScreen,AuthBloc ui;
+    class mainNode,AppEnvironment,configureDependencies,serviceLocator core;
+    class DioFactory,DioInstance,Connectivity,DeviceMetadata,ApiResponse,ApiException,HttpCheck net;
+    class SessionController,SessionStore,SecureStorage,SharedPrefs storage;
 ```
 
 ---
@@ -170,37 +176,34 @@ graph TD
 ```mermaid
 classDiagram
     class SessionController {
-        -SessionStore _store
-        -String? _token
-        -bool _isReady
-        +bool isReady
-        +bool isAuthenticated
-        +String? token
-        +restore() Future~void~
-        +establish(token, accountCode, driverName) Future~void~
-        +signOut() Future~void~
+        -SessionStore store
+        -String token
+        -bool isReady
+        +restore()
+        +establish()
+        +signOut()
     }
 
     class DioFactory {
-        -AppEnvironment _environment
-        -SessionController _session
-        -Connectivity _connectivity
-        -DeviceMetadata _deviceMetadata
+        -AppEnvironment environment
+        -SessionController session
+        -Connectivity connectivity
+        -DeviceMetadata deviceMetadata
     }
 
-    class ApiResponse~T~ {
-        +int? code
-        +int? statusCode
-        +String? message
-        +T? result
-        +requireSuccessfulResult() T
-        +ensureSuccessful() void
+    class ApiResponse {
+        +int code
+        +int statusCode
+        +String message
+        +Object result
+        +requireSuccessfulResult()
+        +ensureSuccessful()
     }
 
     class ApiException {
         <<sealed>>
         +String message
-        +int? statusCode
+        +int statusCode
     }
 
     class NetworkUnavailableException {
