@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -13,6 +14,7 @@ class DeviceMetadata {
     required this.appVersion,
     required this.appBuildNumber,
     required this.deviceModel,
+    required this.deviceId,
   });
 
   static Future<DeviceMetadata> load() async {
@@ -45,13 +47,16 @@ class DeviceMetadata {
 
     if (Platform.isAndroid) {
       final info = await deviceInfo.androidInfo;
+      const androidId = AndroidId();
+      final deviceId = await androidId.getId() ?? '';
       return DeviceMetadata(
         platformType: 'android',
         deviceType: deviceType,
         osVersion: info.version.release ?? '',
         appVersion: packageInfo.version,
         appBuildNumber: packageInfo.buildNumber,
-        deviceModel: info.model ?? '',
+        deviceModel: info.model,
+        deviceId: deviceId,
       );
     }
 
@@ -64,6 +69,7 @@ class DeviceMetadata {
         appVersion: packageInfo.version,
         appBuildNumber: packageInfo.buildNumber,
         deviceModel: info.utsname.machine,
+        deviceId: info.identifierForVendor ?? '',
       );
     }
 
@@ -74,6 +80,7 @@ class DeviceMetadata {
       appVersion: packageInfo.version,
       appBuildNumber: packageInfo.buildNumber,
       deviceModel: Platform.localHostname,
+      deviceId: Platform.localHostname,
     );
   }
 
@@ -83,4 +90,5 @@ class DeviceMetadata {
   final String appVersion;
   final String appBuildNumber;
   final String deviceModel;
+  final String deviceId;
 }

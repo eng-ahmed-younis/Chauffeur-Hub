@@ -1,33 +1,24 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:webase_chucker/webase_chucker.dart';
+
+import '../../../app/config/app_environment.dart';
+import '../../storage/session_controller.dart';
+import 'base/device_metadata.dart';
+import 'dio_factory.dart';
 
 void initNetworkModule(GetIt serviceLocator) {
-  final dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+  serviceLocator.registerLazySingleton<DioFactory>(
+    () => DioFactory(
+      serviceLocator<AppEnvironment>(),
+      serviceLocator<SessionController>(),
+      serviceLocator<Connectivity>(),
+      serviceLocator<DeviceMetadata>(),
     ),
   );
 
-  dio.interceptors.add(
-    PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      error: true,
-      compact: true,
-    ),
+  // Register default Chauffeur Dio instance
+  serviceLocator.registerLazySingleton<Dio>(
+    () => serviceLocator<DioFactory>().create(ApiTarget.chauffeur),
   );
-
-  dio.interceptors.add(WebaseChucker.interceptor);
-
-  serviceLocator.registerLazySingleton<Dio>(() => dio);
 }

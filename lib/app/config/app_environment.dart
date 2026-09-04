@@ -1,5 +1,7 @@
 import 'app_flavor.dart';
 
+/// AppEnvironment (Public): The final, complete configuration object used across your whole app.
+/// It combines hardcoded defaults, command-line overrides (--dart-define), formats URLs (adding `https://`), and holds API keys.
 final class AppEnvironment {
   const AppEnvironment({
     required this.flavor,
@@ -13,18 +15,21 @@ final class AppEnvironment {
     required this.apexApiKey,
     required this.privacyPolicyUrl,
     required this.updateUrl,
+    required this.googleClientId,
+    required this.mapsApiKey,
+    required this.googleDirectionsKey,
+    required this.googlePlacesApiKey,
   });
 
   factory AppEnvironment.fromDefines([AppFlavor? targetFlavor]) {
-
-     String rawFlavor = String.fromEnvironment(
+    String rawFlavor = String.fromEnvironment(
       'APP_FLAVOR',
       defaultValue: AppFlavor.staging.name,
     );
 
     final flavor = targetFlavor ??
         AppFlavor.values.firstWhere(
-              (appFlavor) => appFlavor.name == rawFlavor,
+          (appFlavor) => appFlavor.name == rawFlavor,
           orElse: () => AppFlavor.dev,
         );
 
@@ -78,12 +83,13 @@ final class AppEnvironment {
       firebaseStorageBucket: defaults.firebaseStorageBucket,
       chauffeurApiKey: const String.fromEnvironment('API_KEY_CHAUFFEUR'),
       apexApiKey: const String.fromEnvironment('API_KEY_APEX'),
-      privacyPolicyUrl: const String.fromEnvironment('PRIVACY_POLICY_URL'),
-      updateUrl: const String.fromEnvironment(
-        'UPDATE_URL',
-        defaultValue:
-        'https://play.google.com/store/apps/details?id=com.shift.chauffeur.driver',
-      ),
+      privacyPolicyUrl: 'https://api-cs.shiftinc.com/v4/api/LANG/privacy',
+      updateUrl:
+          'https://play.google.com/store/apps/details?id=com.shift.chauffeur.driver',
+      googleClientId: const String.fromEnvironment('GOOGLE_CLIENT_ID'),
+      mapsApiKey: const String.fromEnvironment('MAPS_API_KEY'),
+      googleDirectionsKey: const String.fromEnvironment('GOOGLE_DIRECTIONS_KEY'),
+      googlePlacesApiKey: const String.fromEnvironment('GOOGLE_PLACES_API_KEY'),
     );
   }
 
@@ -98,6 +104,10 @@ final class AppEnvironment {
   final String apexApiKey;
   final String privacyPolicyUrl;
   final String updateUrl;
+  final String googleClientId;
+  final String mapsApiKey;
+  final String googleDirectionsKey;
+  final String googlePlacesApiKey;
 
   bool get isProduction => flavor == AppFlavor.prod;
 
@@ -109,6 +119,8 @@ final class AppEnvironment {
       .replaceFirst(RegExp(r'/$'), '');
 }
 
+/// _EnvironmentDefaults (Private): A private internal helper class (starts with _)
+/// that simply holds hardcoded default domain hostnames for each flavor (dev, staging, uat, prod).
 final class _EnvironmentDefaults {
   const _EnvironmentDefaults({
     required this.chauffeurHost,
@@ -117,6 +129,7 @@ final class _EnvironmentDefaults {
     required this.apexHost,
     required this.socketUrl,
     required this.firebaseStorageBucket,
+
   });
 
   final String chauffeurHost;
@@ -126,3 +139,13 @@ final class _EnvironmentDefaults {
   final String socketUrl;
   final String firebaseStorageBucket;
 }
+/**
+ * # Run Development
+    flutter run --dart-define-from-file=env/dev.json
+
+    # Run Production
+    flutter run --dart-define-from-file=env/prod.json
+
+    # Build APK Release
+    flutter build apk --release --dart-define-from-file=env/prod.json
+ */
