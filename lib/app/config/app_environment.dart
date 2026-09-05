@@ -1,3 +1,4 @@
+import '../../core/services/logger/app_logger.dart';
 import 'app_flavor.dart';
 
 /// AppEnvironment (Public): The final, complete configuration object used across your whole app.
@@ -22,16 +23,20 @@ final class AppEnvironment {
   });
 
   factory AppEnvironment.fromDefines([AppFlavor? targetFlavor]) {
-    String rawFlavor = String.fromEnvironment(
+    const rawFlavor = String.fromEnvironment(
       'APP_FLAVOR',
-      defaultValue: AppFlavor.staging.name,
+      defaultValue: '',
     );
+
+    AppLogger.info('APP_FLAVOR', 'Raw flavor: "$rawFlavor"');
 
     final flavor = targetFlavor ??
         AppFlavor.values.firstWhere(
           (appFlavor) => appFlavor.name == rawFlavor,
           orElse: () => AppFlavor.dev,
         );
+
+    AppLogger.info('APP_FLAVOR', 'Loaded environment flavor: ${flavor.name.toUpperCase()}');
 
     final defaults = switch (flavor) {
       AppFlavor.dev => const _EnvironmentDefaults(
@@ -139,13 +144,3 @@ final class _EnvironmentDefaults {
   final String socketUrl;
   final String firebaseStorageBucket;
 }
-/**
- * # Run Development
-    flutter run --dart-define-from-file=env/dev.json
-
-    # Run Production
-    flutter run --dart-define-from-file=env/prod.json
-
-    # Build APK Release
-    flutter build apk --release --dart-define-from-file=env/prod.json
- */

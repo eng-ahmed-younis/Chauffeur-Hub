@@ -7,6 +7,7 @@ import '../../../../core/shared/data/dto/driver_status_dto.dart';
 import '../../../../core/shared/data/mappers/driver_status_mapper.dart';
 import '../../../../core/shared/domain/models/driver_status.dart';
 import '../../domain/models/splash_models.dart';
+import 'splash_endpoints.dart';
 
 final class DriverProfile {
   const DriverProfile({this.status});
@@ -32,7 +33,7 @@ final class SplashApi {
 
   Future<AppSettings> settings() async {
     final response = await _settingsDio.get<Object?>(
-      'api/settings',
+      SplashEndpoints.settings,
       queryParameters: const {'take': 1000},
     );
     return _parseApiResponse(
@@ -43,7 +44,7 @@ final class SplashApi {
 
   Future<AppUpdateType> appUpdateType() async {
     final response = await _chauffeurDio.get<Object?>(
-      'api/general/app/info',
+      SplashEndpoints.appInfo,
       queryParameters: {
         'app_name': 'Shift Driver',
         'platform': _deviceMetadata.platformType,
@@ -60,7 +61,7 @@ final class SplashApi {
 
   Future<DriverStatus?> driverStatus() async {
     final response = await _chauffeurDio.get<Object?>(
-      'api/driver/profile',
+      SplashEndpoints.driverProfile,
       options: Options(headers: const {'latitude': '', 'longitude': ''}),
     );
     final profile = _parseApiResponse(

@@ -1,27 +1,27 @@
 import 'dart:async';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/services/network/base/error_message.dart';
-import '../../../../core/shared/domain/models/driver_status.dart';
-import '../../../../core/storage/session_controller.dart';
-import '../../domain/models/splash_models.dart';
-import '../../domain/use_case/check_app_update_use_case.dart';
-import '../../domain/use_case/get_driver_status_use_case.dart';
-import '../../domain/use_case/get_settings_use_case.dart';
 import 'splash_event.dart';
 import 'splash_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/models/splash_models.dart';
+import '../../../../core/storage/session_controller.dart';
+import '../../domain/use_case/get_settings_use_case.dart';
+import '../../domain/use_case/check_app_update_use_case.dart';
+import '../../domain/use_case/get_driver_status_use_case.dart';
+import '../../../../core/shared/domain/models/driver_status.dart';
+import '../../../../core/services/network/base/error_message.dart';
+
+
 
 export 'splash_event.dart';
 export 'splash_state.dart';
 
 final class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  SplashBloc(
-    this._getSettings,
-    this._checkAppUpdate,
-    this._getDriverStatus,
-    this._session,
-  ) : super(const SplashState()) {
+  SplashBloc({
+    required this._getSettingsUseCase,
+    required this._checkAppUpdateUseCase,
+    required this._getDriverStatusUseCase,
+    required this._session,
+  }) : super(const SplashState()) {
     on<SplashStarted>(_onStarted);
     on<SplashUpdatePressed>(
       (_, emit) => emit(
@@ -35,9 +35,9 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<SplashErrorDismissed>((_, emit) => _navigateAfterAuth(emit));
   }
 
-  final GetSettingsUseCase _getSettings;
-  final CheckAppUpdateUseCase _checkAppUpdate;
-  final GetDriverStatusUseCase _getDriverStatus;
+  final GetSettingsUseCase _getSettingsUseCase;
+  final CheckAppUpdateUseCase _checkAppUpdateUseCase;
+  final GetDriverStatusUseCase _getDriverStatusUseCase;
   final SessionController _session;
 
   Future<void> _onStarted(
@@ -51,19 +51,19 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     AppUpdateType? updateType;
 
     await Future.wait([
-      _getSettings()
-          .then<void>((value) => settings = value)
-          .catchError((Object error) {
-            settingsError = error;
-          }),
-      _checkAppUpdate()
-          .then<void>((value) => updateType = value)
-          .catchError((Object error) {
-            appInfoError = error;
-          }),
+      _getSettingsUseCase().then<void>((value) => settings = value).catchError((
+        Object error,
+      ) {
+        settingsError = error;
+      }),
+      _checkAppUpdateUseCase().then<void>((value) => updateType = value).catchError((
+        Object error,
+      ) {
+        appInfoError = error;
+      }),
     ]);
 
-    settings ??= _getSettings.readCached();
+    settings ??= _getSettingsUseCase.readCached();
     emit(
       state.copyWith(
         isLoading: false,
@@ -98,7 +98,7 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     }
 
     try {
-      final status = await _getDriverStatus();
+      final status = await _getDriverStatusUseCase();
       _navigate(
         emit,
         status == DriverStatus.inRide

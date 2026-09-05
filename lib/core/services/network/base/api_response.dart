@@ -24,9 +24,12 @@ class ApiResponse<T> {
     T Function(Object? json) decodeResult,
   ) {
     final rawResult = json['result'] ?? json['data'];
+    final rawStatusCode =
+        json['status_code'] ?? json['statusCode'] ?? json['code'];
+
     return ApiResponse<T>(
       code: (json['code'] as num?)?.toInt(),
-      statusCode: (json['statusCode'] as num?)?.toInt(),
+      statusCode: (rawStatusCode as num?)?.toInt(),
       message: json['message'] as String?,
       result: rawResult != null ? decodeResult(rawResult) : null,
     );
