@@ -7,16 +7,16 @@
 ## ✨ Key Features
 
 - **Luxury Splash Screen & Branding**: Animated entrance with custom emblem, gradient theme (`#0B132B` to `#1C2541`), gold accents (`#D4AF37`), and automated BLoC initialization flow.
-- **Secure Authentication & Session Management**: Powered by `SessionController`, `SessionStore`, and encrypted local storage (`flutter_secure_storage`). Auto-redirects via `GoRouter` auth guards.
+- **Secure Authentication & Session Management**: Powered by `SessionController`, `SessionStore`, `LoginBloc`, and encrypted local storage (`flutter_secure_storage`). Auto-redirects via `GoRouter` auth guards.
 - **Declarative Type-Safe Routing**: Route management with `GoRouter` (`AppRouter`, `AppRoutes`, `AppPages`) supporting compile-time typed parameters.
 - **Multi-Target Network Infrastructure**:
   - `DioFactory` configured with `AppEnvironment`, `SessionController`, `Connectivity`, and `DeviceMetadata`.
   - Multi-service target registration using type-safe `ApiTarget` enums (`chauffeur`, `settings`, `notifications`, `apex`).
   - Integrated `webase_chucker` for in-app HTTP inspection across both Android and iOS without extra permission requirements.
-  - Generic `ApiResponse<T>` wrapper with automatic JSON decoding and data validation.
+  - Generic `ApiResponse<T>` wrapper with automatic JSON decoding and data validation (supporting both camelCase and snake_case backend keys).
   - Sealed class exception hierarchy (`ApiException`, `NetworkUnavailableException`, `UnauthorizedException`, `ServerApiException`, etc.).
   - `HttpCheck` & `NullableHttpCheck` extensions on `int` / `int?` for status code checking.
-- **Clean Architecture & Pure Models**: Granular, decoupled domain models (`AppSettings`, `SettingItem`, `AppInfo`, `AppUpdateType`) leveraging `Equatable` for value equality without code generation overhead.
+- **Feature-First Clean Architecture**: Granular, decoupled domain models (`LoginDriver`, `RecoveryChallenge`, `AppSettings`, `SettingItem`, `AppInfo`, `AppUpdateType`) leveraging `Equatable` for value equality without code generation overhead.
 - **Enhanced App Logging**: Centralized `AppLogger` service with multi-level logging (`info`, `debug`, `warning`, `success`, `error`), formatted JSON output, and `kReleaseMode` production safety.
 - **Responsive & Adaptive Layouts**: Fluid design scaling across mobile and tablet form factors via `flutter_screenutil` and `DeviceMetadata`.
 
@@ -89,10 +89,37 @@ lib/
 │           └── http_check.dart         # HttpCheck & NullableHttpCheck status extensions
 ├── features/
 │   ├── auth/
+│   │   ├── data/
+│   │   │   ├── api/
+│   │   │   │   ├── auth_api.dart        # Auth Remote API client
+│   │   │   │   └── auth_endpoints.dart  # Auth API endpoint path constants
+│   │   │   ├── dto/
+│   │   │   │   ├── login_driver_dto.dart
+│   │   │   │   └── recovery_challenge_dto.dart
+│   │   │   ├── mapper/
+│   │   │   │   ├── login_driver_mapper.dart
+│   │   │   │   └── recovery_challenge_mapper.dart
+│   │   │   └── repo/
+│   │   │       └── auth_repository_impl.dart # Auth repository implementation
+│   │   ├── domain/
+│   │   │   ├── models/
+│   │   │   │   ├── auth_models.dart     # Auth models barrel file
+│   │   │   │   ├── login_driver.dart    # Login driver domain model
+│   │   │   │   ├── otp_parameters.dart  # OTP parameter payload model
+│   │   │   │   ├── recovery_challenge.dart # Password recovery challenge model
+│   │   │   │   └── reset_password_parameters.dart # Reset password payload model
+│   │   │   ├── repo/
+│   │   │   │   └── auth_repository.dart # Auth repository interface
+│   │   │   └── usecases/
+│   │   │       └── login_use_case.dart  # Driver login use case
 │   │   └── presentation/
 │   │       └── screens/
 │   │           └── login/
-│   │               └── login.screen.dart # Chauffeur login screen UI
+│   │               ├── bloc/
+│   │               │   ├── login_bloc.dart  # Login state management BLoC
+│   │               │   ├── login_event.dart # Login BLoC events
+│   │               │   └── login_state.dart # Login BLoC states
+│   │               └── login.screen.dart    # Chauffeur login screen UI
 │   └── splash/
 │       ├── data/
 │       │   ├── api/
@@ -149,7 +176,7 @@ graph TD
         AppRoutes["AppRoutes"]
     end
 
-    subgraph SplashFeature ["Splash Feature (Clean Architecture)"]
+    subgraph SplashFeature ["Splash Feature"]
         SplashScreen["SplashScreen"]
         SplashBloc["SplashBloc"]
         GetSettingsUseCase["GetSettingsUseCase"]
@@ -159,9 +186,12 @@ graph TD
         SplashApi["SplashApi"]
     end
 
-    subgraph PresentationLayer ["Presentation Layer"]
+    subgraph AuthFeature ["Auth Feature"]
         LoginScreen["LoginScreen"]
-        AuthBloc["AuthBloc / Cubit"]
+        LoginBloc["LoginBloc"]
+        LoginUseCase["LoginUseCase"]
+        AuthRepository["AuthRepository"]
+        AuthApi["AuthApi"]
     end
 
     subgraph SessionStorageLayer ["Session & Local Storage"]
@@ -204,11 +234,14 @@ graph TD
     CheckAppUpdateUseCase --> SplashRepository
     GetDriverStatusUseCase --> SplashRepository
     SplashRepository --> SplashApi
-
     SplashApi --> DioInstance
 
-    LoginScreen --> AuthBloc
-    AuthBloc --> SessionController
+    LoginScreen --> LoginBloc
+    LoginBloc --> LoginUseCase
+    LoginUseCase --> AuthRepository
+    AuthRepository --> AuthApi
+    AuthApi --> DioInstance
+    LoginBloc --> SessionController
 
     SessionController --> SessionStore
     SessionStore --> SecureStorage
@@ -230,7 +263,7 @@ graph TD
     classDef net fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
     classDef storage fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
 
-    class ChauffeurApp,GoRouter,AppPages,AppRoutes,SplashScreen,SplashBloc,LoginScreen,AuthBloc,GetSettingsUseCase,CheckAppUpdateUseCase,GetDriverStatusUseCase,SplashRepository,SplashApi ui;
+    class ChauffeurApp,GoRouter,AppPages,AppRoutes,SplashScreen,SplashBloc,LoginScreen,LoginBloc,LoginUseCase,AuthRepository,AuthApi,GetSettingsUseCase,CheckAppUpdateUseCase,GetDriverStatusUseCase,SplashRepository,SplashApi ui;
     class mainNode,AppEnvironment,configureDependencies,serviceLocator core;
     class DioFactory,DioInstance,Connectivity,DeviceMetadata,WebaseChucker,ApiResponse,ApiException net;
     class SessionController,SessionStore,SecureStorage,SharedPrefs storage;

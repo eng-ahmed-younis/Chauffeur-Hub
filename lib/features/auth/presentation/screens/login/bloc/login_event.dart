@@ -7,13 +7,13 @@ sealed class LoginEvent {
   const factory LoginEvent.passwordChanged({required String password}) =
       LoginPasswordChanged;
 
-  const factory LoginEvent.passwordVisibilityToggled() =
-      LoginPasswordVisibilityToggled;
+  // const factory LoginEvent.passwordVisibilityToggled() =
+  //     LoginPasswordVisibilityToggled;
 
   const factory LoginEvent.loginButtonPressed({
     required String email,
     required String password,
-  }) = OnLoginButtonPressed;
+  }) = LoginSubmitted;
 
   const factory LoginEvent.forgotPasswordPressed() = OnForgotPasswordPressed;
 }
@@ -30,12 +30,12 @@ final class LoginPasswordChanged extends LoginEvent {
   final String password;
 }
 
-final class LoginPasswordVisibilityToggled extends LoginEvent {
-  const LoginPasswordVisibilityToggled();
-}
+// final class LoginPasswordVisibilityToggled extends LoginEvent {
+//   const LoginPasswordVisibilityToggled();
+// }
 
-final class OnLoginButtonPressed extends LoginEvent {
-  const OnLoginButtonPressed({required this.email, required this.password});
+final class LoginSubmitted extends LoginEvent {
+  const LoginSubmitted({required this.email, required this.password});
 
   final String email;
   final String password;

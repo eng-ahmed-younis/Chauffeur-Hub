@@ -3,12 +3,11 @@ import 'api_exception.dart';
 // ignore: prefer_initializing_formals
 class ApiResponse<T> {
   const ApiResponse({
-    int? code,
+    this._code,
     int? statusCode,
     String? message,
     T? result,
-  })  : _code = code,
-        _statusCode = statusCode,
+  })  : _statusCode = statusCode,
         _message = message,
         _result = result;
 
