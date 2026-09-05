@@ -12,15 +12,16 @@ import '../../../../core/services/network/base/error_message.dart';
 
 
 
+
 export 'splash_event.dart';
 export 'splash_state.dart';
 
 final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc({
-    required this._getSettingsUseCase,
-    required this._checkAppUpdateUseCase,
-    required this._getDriverStatusUseCase,
-    required this._session,
+    required this.getSettingsUseCase,
+    required this.checkAppUpdateUseCase,
+    required this.getDriverStatusUseCase,
+    required this.session,
   }) : super(const SplashState()) {
     on<SplashStarted>(_onStarted);
     on<SplashUpdatePressed>(
@@ -35,10 +36,10 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<SplashErrorDismissed>((_, emit) => _navigateAfterAuth(emit));
   }
 
-  final GetSettingsUseCase _getSettingsUseCase;
-  final CheckAppUpdateUseCase _checkAppUpdateUseCase;
-  final GetDriverStatusUseCase _getDriverStatusUseCase;
-  final SessionController _session;
+  final GetSettingsUseCase getSettingsUseCase;
+  final CheckAppUpdateUseCase checkAppUpdateUseCase;
+  final GetDriverStatusUseCase getDriverStatusUseCase;
+  final SessionController session;
 
   Future<void> _onStarted(
     SplashStarted event,
@@ -50,20 +51,26 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     AppSettings? settings;
     AppUpdateType? updateType;
 
+    // runs multiple asynchronous operations concurrently (in parallel) and waits for all
+    // of them to complete before moving to the next line of code.
     await Future.wait([
-      _getSettingsUseCase().then<void>((value) => settings = value).catchError((
+      // The session.restore() method is responsible for restoring the user's session from persistent storage
+      //(like SharedPreferences or SecureStorage).
+      session.restore(),
+      getSettingsUseCase().then<void>((value) => settings = value).catchError((
         Object error,
       ) {
         settingsError = error;
       }),
-      _checkAppUpdateUseCase().then<void>((value) => updateType = value).catchError((
-        Object error,
-      ) {
-        appInfoError = error;
-      }),
+      checkAppUpdateUseCase()
+          .then<void>((value) => updateType = value)
+          .catchError((Object error) {
+            appInfoError = error;
+          }),
     ]);
 
-    settings ??= _getSettingsUseCase.readCached();
+    settings ??= getSettingsUseCase.readCached();
+
     emit(
       state.copyWith(
         isLoading: false,
@@ -92,13 +99,14 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   Future<void> _navigateAfterAuth(Emitter<SplashState> emit) async {
-    if (!_session.isAuthenticated) {
+    if (!session.isAuthenticated) {
       _navigate(emit, SplashDestination.login);
       return;
     }
+    // If the user is authenticated, we check their driver status to determine the appropriate navigation destination.
 
     try {
-      final status = await _getDriverStatusUseCase();
+      final status = await getDriverStatusUseCase();
       _navigate(
         emit,
         status == DriverStatus.inRide
@@ -117,7 +125,9 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
         updateType: null,
         effect: SplashEffect.navigate,
         effectId: state.effectId + 1,
-      ),
+      )
     );
+    
+
   }
 }

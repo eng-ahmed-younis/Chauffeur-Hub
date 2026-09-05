@@ -2,6 +2,7 @@ import '../../domain/models/splash_models.dart';
 
 enum SplashDestination { login, home, currentTrip }
 
+// one time effects [fire and forget]
 enum SplashEffect { none, navigate, showError, openUpdateUrl }
 
 final class SplashState {
@@ -23,6 +24,8 @@ final class SplashState {
   final SplashEffect effect;
   final int effectId;
 
+  // the BLoC copyWith() creates a new copy of an immutable state object, updating only
+  // the specific fields you pass in, while preserving all other existing field values.
   SplashState copyWith({
     bool? isLoading,
     AppSettings? settings,
@@ -43,8 +46,10 @@ final class SplashState {
     );
   }
 
+  // By overriding operator ==, you enable Value Equality
+  // (comparing field values instead of memory addresses):
   @override
-  bool operator ==(Object other) =>
+  bool operator == (Object other) =>
       identical(this, other) ||
       other is SplashState &&
           runtimeType == other.runtimeType &&

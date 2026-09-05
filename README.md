@@ -17,6 +17,7 @@
   - Sealed class exception hierarchy (`ApiException`, `NetworkUnavailableException`, `UnauthorizedException`, `ServerApiException`, etc.).
   - `HttpCheck` & `NullableHttpCheck` extensions on `int` / `int?` for status code checking.
 - **Clean Architecture & Pure Models**: Granular, decoupled domain models (`AppSettings`, `SettingItem`, `AppInfo`, `AppUpdateType`) leveraging `Equatable` for value equality without code generation overhead.
+- **Enhanced App Logging**: Centralized `AppLogger` service with multi-level logging (`info`, `debug`, `warning`, `success`, `error`), formatted JSON output, and `kReleaseMode` production safety.
 - **Responsive & Adaptive Layouts**: Fluid design scaling across mobile and tablet form factors via `flutter_screenutil` and `DeviceMetadata`.
 
 ---
@@ -35,15 +36,21 @@ lib/
 │   │   └── app_settings_constants.dart  # App constants & key-value settings
 │   ├── services/
 │   │   ├── di/
+│   │   │   ├── bloc/
+│   │   │   │   └── bloc_injection.dart # DI module for BLoCs & Cubits
 │   │   │   ├── core/
-│   │   │   │   └── core_injection.dart  # Core dependencies (SharedPreferences, DeviceMetadata, etc.)
+│   │   │   │   └── core_injection.dart # Core dependencies (SharedPreferences, DeviceMetadata, etc.)
 │   │   │   ├── navigation/
 │   │   │   │   └── navigation_injection.dart # GoRouter DI registration
 │   │   │   ├── network/
-│   │   │   │   └── network_injection.dart   # Multi-target Dio registration (ApiTarget enum)
+│   │   │   │   └── network_injection.dart  # Multi-target Dio registration (ApiTarget enum)
 │   │   │   ├── repo/
-│   │   │   │   └── repo_injection.dart  # Repository DI registration
-│   │   │   └── service_locator.dart    # Main GetIt configuration & initialization
+│   │   │   │   └── repo_injection.dart # Repository DI registration
+│   │   │   ├── use_cases/
+│   │   │   │   └── use_cases.injection.dart # DI module for domain use cases
+│   │   │   └── service_locator.dart   # Main GetIt configuration & initialization
+│   │   ├── logger/
+│   │   │   └── app_logger.dart         # Multi-level structured AppLogger service
 │   │   ├── navigation/
 │   │   │   ├── app_pages.dart          # GoRoute definitions & path bindings
 │   │   │   ├── app_router.dart         # GoRouter instance & session guard logic
@@ -89,7 +96,8 @@ lib/
 │   └── splash/
 │       ├── data/
 │       │   ├── api/
-│       │   │   └── splash_api.dart      # Splash Remote API client
+│       │   │   ├── splash_api.dart      # Splash Remote API client
+│       │   │   └── splash_endpoints.dart# Splash API endpoint path constants
 │       │   ├── dto/
 │       │   │   ├── app_settings_dto.dart
 │       │   │   └── setting_item_dto.dart
@@ -363,7 +371,7 @@ Ensure you have the following installed:
 
 3. **Run the application**:
    ```bash
-   flutter run
+   flutter run --dart-define-from-file=env/.env.staging
    ```
 
 ---
