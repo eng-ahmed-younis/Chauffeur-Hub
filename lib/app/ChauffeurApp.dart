@@ -1,8 +1,11 @@
+import '../core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
 import '../core/services/di/service_locator.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+
+
 
 final class ChauffeurApp extends StatelessWidget {
   const ChauffeurApp({super.key});
@@ -18,11 +21,13 @@ final class ChauffeurApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: "Chauffeur Hub",
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.light(),
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          title: "Chauffeur Hub",
+          themeMode: ThemeMode.system,
           routerConfig: serviceLocator<GoRouter>(),
-          builder: (context, child) => child ?? const SizedBox.shrink()
+          builder: (context, child) => child ?? const SizedBox.shrink(),
         );
       },
     );

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:chauffeur_hub/core/theme/app_system_bar.dart';
 import '../../../../core/services/navigation/app_routes.dart';
+import 'package:chauffeur_hub/core/theme/system/app_system_bar.dart';
 
 
 class SplashScreen extends StatelessWidget {
