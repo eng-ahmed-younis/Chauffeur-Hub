@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Driver (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_flavors/main_dev.dart",
+      "toolArgs": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file=env/.env.dev"
+      ]
+    },
+    {
+      "name": "Driver (Staging)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_flavors/main_staging.dart",
+      "toolArgs": [
+        "--flavor",
+        "staging",
+        "--dart-define-from-file=env/.env.staging"
+      ]
+    },
+    {
+      "name": "Driver (UAT)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_flavors/main_uat.dart",
+      "toolArgs": [
+        "--flavor",
+        "uat",
+        "--dart-define-from-file=env/.env.uat"
+      ]
+    },
+    {
+      "name": "Driver (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_flavors/main_prod.dart",
+      "toolArgs": [
+        "--flavor",
+        "prod",
+        "--dart-define-from-file=env/.env.prod"
+      ]
+    }
+  ]
+}

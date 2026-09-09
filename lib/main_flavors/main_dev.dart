@@ -1,7 +1,8 @@
-import 'package:chauffeur_hub/app/ChauffeurApp.dart';
-import 'package:chauffeur_hub/core/services/di/service_locator.dart';
+import '../app/ChauffeurApp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../core/services/di/service_locator.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,4 +13,3 @@ Future<void> main() async {
 
   runApp(const ChauffeurApp());
 }
-
