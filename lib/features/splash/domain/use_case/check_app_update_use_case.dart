@@ -6,5 +6,14 @@ final class CheckAppUpdateUseCase {
 
   final SplashRepository _repository;
 
-  Future<AppUpdateType> call() => _repository.appUpdateType();
+  Future<AppUpdateType> call() async {
+    try {
+      return await _repository.appUpdateType().timeout(
+        const Duration(seconds: 5),
+      );
+    } on Object {
+      // App-update checks are optional and must not block startup.
+      return AppUpdateType.noUpdate;
+    }
+  }
 }

@@ -1,5 +1,5 @@
-import 'package:chauffeur_hub/core/storage/session_store.dart';
 import 'package:flutter/foundation.dart';
+import 'package:chauffeur_hub/core/storage/session_store.dart';
 
 // Because it extends [ChangeNotifier], components across the app (like GoRouter)
 // can listen to changes via notifyListeners().
@@ -17,10 +17,18 @@ final class SessionController extends ChangeNotifier {
 
   // Called typically during app startup to restore the session state from persistent storage.
   Future<void> restore() async {
-    _token = await _store.readToken();
-    // after load complete for preferences then set isReady to true that can go to complete app flow
-    _isReady = true;
-    notifyListeners();
+    try {
+      _token = await _store
+          .readToken()
+          .timeout(const Duration(seconds: 5));
+    } on Object {
+      // A storage failure should not leave the router permanently on splash.
+      _token = null;
+    } finally {
+      // Mark startup complete even when no previous session can be restored.
+      _isReady = true;
+      notifyListeners();
+    }
   }
 
   Future<void> establish({
@@ -43,7 +51,6 @@ final class SessionController extends ChangeNotifier {
     notifyListeners();
   }
 }
-
 
 /// The [SessionController] is the central authentication state manager for the app.
 ///
@@ -84,4 +91,3 @@ final class SessionController extends ChangeNotifier {
 ///    * If an API endpoint returns `401 Unauthorized` (expired session), the
 ///      network interceptor calls `session.signOut()` to gracefully return the
 ///      user to the login screen.
-

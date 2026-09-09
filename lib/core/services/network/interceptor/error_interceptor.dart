@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-
 import '../base/api_exception.dart';
 import '../../../storage/session_controller.dart';
 import '../../../utils/extentions/http_check.dart';
+
 
 // ignore_for_file: avoid_renaming_method_parameters
 
@@ -10,7 +10,7 @@ import '../../../utils/extentions/http_check.dart';
 // 1- catching, 2- translating, 3- and handling all network errors
 // (HTTP failures, timeouts, etc.) globally across your application.
 final class ErrorInterceptor extends Interceptor {
-  ErrorInterceptor({required SessionController session}) : _session = session;
+  ErrorInterceptor({required this._session});
 
   final SessionController _session;
 

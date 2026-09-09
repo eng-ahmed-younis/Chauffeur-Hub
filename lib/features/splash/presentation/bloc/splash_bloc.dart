@@ -57,17 +57,27 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
       // The session.restore() method is responsible for restoring the user's session from persistent storage
       //(like SharedPreferences or SecureStorage).
       session.restore(),
-      getSettingsUseCase().then<void>((value) => settings = value).catchError((
+      getSettingsUseCase().then<void>(
+        (value) {
+          settings = value;
+          updateType = AppUpdateType.noUpdate;
+        }
+        ).catchError((
         Object error,
       ) {
         settingsError = error;
       }),
+
+
+      
       checkAppUpdateUseCase()
           .then<void>((value) => updateType = value)
           .catchError((Object error) {
             appInfoError = error;
           }),
-    ]);
+      
+    ]
+    ).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
 
     settings ??= getSettingsUseCase.readCached();
 
@@ -80,7 +90,7 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     );
 
     final error = appInfoError ?? settingsError;
-    if (error != null) {
+    if (error != null && settings == null) {
       emit(
         state.copyWith(
           errorMessage: readableError(error),
@@ -99,14 +109,16 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   Future<void> _navigateAfterAuth(Emitter<SplashState> emit) async {
-    if (!session.isAuthenticated) {
+  //  if (!session.isAuthenticated) {
       _navigate(emit, SplashDestination.login);
       return;
-    }
+  //  }
     // If the user is authenticated, we check their driver status to determine the appropriate navigation destination.
 
     try {
-      final status = await getDriverStatusUseCase();
+      final status = await getDriverStatusUseCase().timeout(
+        const Duration(seconds: 5),
+      );
       _navigate(
         emit,
         status == DriverStatus.inRide
@@ -125,9 +137,7 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
         updateType: null,
         effect: SplashEffect.navigate,
         effectId: state.effectId + 1,
-      )
+      ),
     );
-    
-
   }
 }
