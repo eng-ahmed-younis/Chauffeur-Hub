@@ -12,15 +12,20 @@ import 'interceptor/request_metadat_aInterceptor.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 
+
+
+
+
+
 enum ApiTarget { chauffeur, settings, notifications, apex }
 
 final class DioFactory {
   const DioFactory(
-      this._environment,
-      this._session,
-      this._connectivity,
-      this._deviceMetadata,
-      );
+    this._environment,
+    this._session,
+    this._connectivity,
+    this._deviceMetadata,
+  );
 
   final AppEnvironment _environment;
   final SessionController _session;
@@ -36,8 +41,8 @@ final class DioFactory {
       BaseOptions(
         baseUrl: _baseUrl(target),
         connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(minutes: 2),
-        sendTimeout: const Duration(minutes: 2),
+        receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
       ),
@@ -58,8 +63,8 @@ final class DioFactory {
   List<Interceptor> _interceptors(String apiKey) {
     final isNonProd =
         _environment.flavor == AppFlavor.staging ||
-            _environment.flavor == AppFlavor.uat ||
-            _environment.flavor == AppFlavor.dev;
+        _environment.flavor == AppFlavor.uat ||
+        _environment.flavor == AppFlavor.dev;
 
     final shouldLog = kDebugMode || isNonProd;
 
@@ -71,7 +76,7 @@ final class DioFactory {
         deviceMetadata: _deviceMetadata,
       ),
       ErrorInterceptor(session: _session),
-      if (shouldLog) ...[SafeLogInterceptor(), WebaseChuckerInterceptor()],
+      if (shouldLog) ...[SafeLogInterceptor(), WebaseChucker.interceptor],
     ];
   }
 }
