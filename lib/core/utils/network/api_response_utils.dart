@@ -1,7 +1,7 @@
 import 'dart:convert';
+
 import '../../services/network/base/api_response.dart';
 import '../../services/network/base/api_exception.dart';
-
 
 Map<String, dynamic> asMap(Object? value) {
   // couvert dio response data from Map<dynamic, dynamic> to Map<String, dynamic>
@@ -13,18 +13,18 @@ Map<String, dynamic> asMap(Object? value) {
         value.isNotEmpty ? jsonDecode(value) : <String, dynamic>{},
       );
     } catch (_) {
-      throw const InvalidResponseException();
+      throw const ApiException.invalidResponse();
     }
   }
-  throw const InvalidResponseException();
+  throw const ApiException.invalidResponse();
 }
+
 // we have 2 maps maps fron api response and map from
 // result
 ApiResponse<T> parseApiResponse<T>(
   Object? value,
   T Function(Object? json) decode,
 ) => ApiResponse.fromJson(asMap(value), decode);
-
 
 /**
  * Flow:

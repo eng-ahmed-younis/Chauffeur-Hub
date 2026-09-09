@@ -8,7 +8,7 @@ import 'package:chauffeur_hub/features/auth/data/dto/recovery_challenge_dto.dart
 // ignore_for_file: unused_element
 
 final class AuthApi {
-  AuthApi(this._dio);
+  AuthApi({required this._dio});
 
   final Dio _dio;
 
@@ -35,7 +35,7 @@ final class AuthApi {
 
       return LoginDriverDto.fromJson(result);
     } on DioException catch (e) {
-      throw ServerApiException(
+      throw ApiException.server(
         e.message ?? 'Login request failed.',
         statusCode: e.response?.statusCode,
       );
@@ -59,7 +59,7 @@ final class AuthApi {
 
       return RecoveryChallengeDto.fromJson(result);
     } on DioException catch (e) {
-      throw ServerApiException(
+      throw ApiException.server(
         e.message ?? 'Password reset request failed.',
         statusCode: e.response?.statusCode,
       );
@@ -88,7 +88,7 @@ final class AuthApi {
         (json) => json,
       ).requireSuccessfulResult();
     } on DioException catch (e) {
-      throw ServerApiException(
+      throw ApiException.server(
         e.message ?? 'OTP verification failed.',
         statusCode: e.response?.statusCode,
       );
@@ -123,7 +123,7 @@ final class AuthApi {
 
       return RecoveryChallengeDto.fromJson(result);
     } on DioException catch (e) {
-      throw ServerApiException(
+      throw ApiException.server(
         e.message ?? 'Reset password failed.',
         statusCode: e.response?.statusCode,
       );

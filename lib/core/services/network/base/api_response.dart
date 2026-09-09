@@ -2,14 +2,10 @@ import 'api_exception.dart';
 
 // ignore: prefer_initializing_formals
 class ApiResponse<T> {
-  const ApiResponse({
-    this._code,
-    int? statusCode,
-    String? message,
-    T? result,
-  })  : _statusCode = statusCode,
-        _message = message,
-        _result = result;
+  const ApiResponse({this._code, int? statusCode, String? message, T? result})
+    : _statusCode = statusCode,
+      _message = message,
+      _result = result;
 
   // T Function(Object? json)
   // │     │        │
@@ -48,7 +44,7 @@ class ApiResponse<T> {
     ensureSuccessful();
     final value = _result;
     if (value == null) {
-      throw const InvalidResponseException(
+      throw const ApiException.invalidResponse(
         'The response did not contain data.',
       );
     }
@@ -58,7 +54,7 @@ class ApiResponse<T> {
   void ensureSuccessful() {
     final effectiveCode = _code ?? _statusCode;
     if (effectiveCode == null || effectiveCode < 200 || effectiveCode > 299) {
-      throw ServerApiException(
+      throw ApiException.server(
         _message ?? 'Unknown server error.',
         statusCode: effectiveCode,
       );

@@ -79,11 +79,11 @@ flutter_launcher_icons:
 package_rename_config:
   android:
     app_name: "Chauffeur Hub"
-    package_name: "com.example.chauffeur_hub"
+    package_name: "com.shift.chauffeur.driver"
   ios:
     app_name: "Chauffeur Hub"
     bundle_name: "Chauffeur Hub"
-    package_name: "com.example.chauffeurhub"
+    package_name: "com.shift.chauffeur.driver"
 
 
 

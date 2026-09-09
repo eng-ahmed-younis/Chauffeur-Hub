@@ -1,9 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chauffeur_hub/core/utils/result.dart';
 import 'package:chauffeur_hub/core/utils/validators.dart';
+import 'package:chauffeur_hub/core/storage/session_controller.dart';
 import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_event.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_state.dart';
+// ignore_for_file: unused_field
+
 
 // ignore_for_file: unused_local_variable
 
@@ -11,15 +14,16 @@ import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/logi
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
-  LoginBloc({required this._loginUseCase})
+  LoginBloc({required this._loginUseCase, required this._sessionController})
     : super(const LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_passwordChanged);
     on<OnForgotPasswordPressed>(_onForgotPasswordPressed);
     on<LoginSubmitted>(_onLoginSubmitted);
   }
-
+  
   final LoginUseCase _loginUseCase;
+  final SessionController _sessionController;
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginState> emit) {
     emit(
@@ -83,21 +87,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     switch (result) {
-      case Success(:final data):
-        emit(
-          state.copyWith(
-            status: LoginStatus.success,
-            errorMessage: '',
-            effect: LoginEffect.openHome,
-            effectId: state.effectId + 1,
-          ),
-        );
       case Failure(:final error):
         emit(
           state.copyWith(
             status: LoginStatus.failure,
             errorMessage: error.message,
-            effect: LoginEffect.showError,
+          ),
+        );
+      case Success(:final data):
+        emit(
+          state.copyWith(
+            status: LoginStatus.success,
+            effect: LoginEffect.openHome,
             effectId: state.effectId + 1,
           ),
         );

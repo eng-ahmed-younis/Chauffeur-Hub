@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
+
 import '../base/api_exception.dart';
 import '../../../storage/session_controller.dart';
 import '../../../utils/extentions/http_check.dart';
-
 
 // ignore_for_file: avoid_renaming_method_parameters
 
@@ -42,7 +42,7 @@ final class ErrorInterceptor extends Interceptor {
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout) {
-      return const RequestTimeoutException();
+      return const ApiException.requestTimeout();
     }
     final statusCode = error.response?.statusCode;
     final data = error.response?.data;
@@ -51,9 +51,9 @@ final class ErrorInterceptor extends Interceptor {
         : data?.toString();
 
     if (statusCode.isUnauthorized) {
-      return UnauthorizedException(message ?? statusCode.errorMessage);
+      return ApiException.unauthorized(message ?? statusCode.errorMessage);
     }
-    return ServerApiException(
+    return ApiException.server(
       message ?? statusCode.errorMessage,
       statusCode: statusCode,
     );
