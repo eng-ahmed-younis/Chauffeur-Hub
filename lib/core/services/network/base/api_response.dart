@@ -2,8 +2,7 @@ import 'api_exception.dart';
 
 // ignore: prefer_initializing_formals
 class ApiResponse<T> {
-  const ApiResponse({this._code, this._statusCode, String? message, this._result})
-    : _message = message;
+  const ApiResponse({this._code, this._statusCode, this._message, this._result});
 
   // T Function(Object? json)
   // │     │        │

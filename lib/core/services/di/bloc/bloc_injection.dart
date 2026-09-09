@@ -1,5 +1,5 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import '../../../storage/session_store.dart';
 import '../../../storage/session_controller.dart';
 import '../../../../features/splash/presentation/bloc/splash_bloc.dart';
 import '../../../../features/splash/domain/use_case/get_settings_use_case.dart';
@@ -13,7 +13,6 @@ import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/logi
 
     show LoginBloc;
 
-import '../../../storage/session_store.dart';
 
 void initBlocModule(GetIt serviceLocator) {
   // registerFactory is commonly used for BLoCs because a BLoC usually
