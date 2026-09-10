@@ -168,7 +168,7 @@ This sequence demonstrates the initialization timeline from the moment the user 
 
 ```mermaid
 flowchart TD
-    subgraph Launch ["1. App Launch"]
+    subgraph Launch ["1. App Launch & Env Config"]
         User(["📱 User Taps App Icon"]) --> OS["Mobile OS"]
         OS --> Main["main() in main_flavors"]
         Main --> InitBind["WidgetsFlutterBinding.ensureInitialized()"]
@@ -177,12 +177,17 @@ flowchart TD
 
     subgraph DI ["2. Dependency Injection Phase (GetIt)"]
         SysUI --> ConfigDI["configureDependencies()"]
-        ConfigDI --> CoreMod["initCoreModule()<br>• Firebase Init<br>• SharedPreferences<br>• SecureStorage<br>• SessionController"]
-        CoreMod --> NetMod["initNetworkModule()<br>• DioFactory & ApiTargets"]
-        NetMod --> RepoMod["initRepositoryModule()"]
-        RepoMod --> UCMod["initUseCaseModule()"]
-        UCMod --> BlocMod["initBlocModule()<br>• SplashBloc<br>• LoginBloc"]
-        BlocMod --> NavMod["initNavigationModule()<br>• GoRouter setup"]
+        
+        ConfigDI --> EnvLoad["AppEnvironment.fromDefines()<br>• Reads --dart-define / .env<br>• Resolves AppFlavor (dev/staging/uat/prod)<br>• Sets Base URLs & API Keys"]
+        
+        EnvLoad --> CoreMod["initCoreModule()<br>• Registers AppEnvironment Singleton<br>• Firebase Init<br>• SharedPreferences & SecureStorage<br>• SessionController & SessionStore<br>• FcmService"]
+        
+        CoreMod --> NetMod["initNetworkModule()<br>• DioFactory (injects AppEnvironment)<br>• Multi-target Dio Clients (chauffeur, settings, apex)"]
+        
+        NetMod --> RepoMod["initRepositoryModule()<br>• AuthRepository & SplashRepository"]
+        RepoMod --> UCMod["initUseCaseModule()<br>• LoginUseCase, GetSettingsUseCase, etc."]
+        UCMod --> BlocMod["initBlocModule()<br>• SplashBloc, LoginBloc, ForgetBloc"]
+        BlocMod --> NavMod["initNavigationModule()<br>• GoRouter setup with SessionController guard"]
     end
 
     subgraph AppRun ["3. App Mounting & Navigation"]
@@ -195,9 +200,9 @@ flowchart TD
 
     subgraph SplashExec ["4. Splash BLoC Execution"]
         SplashUI --> SplashBlocEv["SplashBloc.add(SplashStarted)"]
-        SplashBlocEv --> FCM["FcmService.getFcmToken()"]
-        SplashBlocEv --> Restore["session.restore()"]
-        SplashBlocEv --> Settings["getSettingsUseCase()"]
+        SplashBlocEv --> FCM["FcmService.getFcmToken() (Background)"]
+        SplashBlocEv --> Restore["session.restore() (Reads local storage)"]
+        SplashBlocEv --> Settings["getSettingsUseCase() & checkAppUpdateUseCase()"]
         SplashBlocEv --> Status["getDriverStatusUseCase()"]
     end
 
@@ -208,7 +213,7 @@ flowchart TD
     classDef exec fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
 
     class User,OS,Main,InitBind,SysUI launch;
-    class ConfigDI,CoreMod,NetMod,RepoMod,UCMod,BlocMod,NavMod di;
+    class ConfigDI,EnvLoad,CoreMod,NetMod,RepoMod,UCMod,BlocMod,NavMod di;
     class RunApp,ScreenUtil,MatApp,RouterEval,SplashUI app;
     class SplashBlocEv,FCM,Restore,Settings,Status exec;
 ```
