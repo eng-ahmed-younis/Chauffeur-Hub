@@ -1,7 +1,10 @@
+import 'package:chauffeur_hub/features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/auth/presentation/screens/forget/forget_password_screen.dart';
+import '../../../features/auth/presentation/screens/login/bloc/login_bloc.dart';
 import '../../../features/auth/presentation/screens/login/login.screen.dart';
 import '../../../features/splash/presentation/bloc/splash_bloc.dart';
 import '../../../features/splash/presentation/screens/splash_screen.dart';
@@ -22,7 +25,10 @@ abstract final class AppPages {
     ),
     GoRoute(
       path: AppRoutes.login,
-      builder: (context, state) => const LoginScreen(),
+      builder: (context, state) => BlocProvider<LoginBloc>(
+        create: (context) => serviceLocator<LoginBloc>(),
+        child: const LoginScreen(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.home,
@@ -39,5 +45,12 @@ abstract final class AppPages {
         body: const Center(child: Text('Welcome to Chauffeur Hub Home')),
       ),
     ),
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      builder: (context, state) => BlocProvider<ForgetBloc>(
+        create: (context) => serviceLocator<ForgetBloc>(),
+        child: const ForgetPasswordScreen(),
+      ),
+    )
   ];
 }

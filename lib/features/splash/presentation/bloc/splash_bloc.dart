@@ -1,7 +1,10 @@
 import 'dart:async';
+
 import 'splash_event.dart';
 import 'splash_state.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/models/splash_models.dart';
 import '../../../../core/storage/session_controller.dart';
 import '../../domain/use_case/get_settings_use_case.dart';
@@ -9,9 +12,6 @@ import '../../domain/use_case/check_app_update_use_case.dart';
 import '../../domain/use_case/get_driver_status_use_case.dart';
 import '../../../../core/shared/domain/models/driver_status.dart';
 import '../../../../core/services/network/base/error_message.dart';
-
-
-
 
 export 'splash_event.dart';
 export 'splash_state.dart';
@@ -57,27 +57,22 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
       // The session.restore() method is responsible for restoring the user's session from persistent storage
       //(like SharedPreferences or SecureStorage).
       session.restore(),
-      getSettingsUseCase().then<void>(
-        (value) {
-          settings = value;
-          updateType = AppUpdateType.noUpdate;
-        }
-        ).catchError((
-        Object error,
-      ) {
-        settingsError = error;
-      }),
 
+      getSettingsUseCase()
+          .then<void>((value) {
+            settings = value;
+            updateType = AppUpdateType.noUpdate;
+          })
+          .catchError((Object error) {
+            settingsError = error;
+          }),
 
-      
       checkAppUpdateUseCase()
           .then<void>((value) => updateType = value)
           .catchError((Object error) {
             appInfoError = error;
           }),
-      
-    ]
-    ).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
+    ]).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
 
     settings ??= getSettingsUseCase.readCached();
 
@@ -109,10 +104,10 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   Future<void> _navigateAfterAuth(Emitter<SplashState> emit) async {
-  //  if (!session.isAuthenticated) {
+    if (!session.isAuthenticated) {
       _navigate(emit, SplashDestination.login);
       return;
-  //  }
+    }
     // If the user is authenticated, we check their driver status to determine the appropriate navigation destination.
 
     try {
@@ -131,6 +126,7 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   void _navigate(Emitter<SplashState> emit, SplashDestination destination) {
+    session.markReady();
     emit(
       state.copyWith(
         destination: destination,

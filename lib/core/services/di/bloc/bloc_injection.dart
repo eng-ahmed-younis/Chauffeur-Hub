@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import '../../../../features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import '../../../storage/session_store.dart';
 import '../../../storage/session_controller.dart';
 import '../../../../features/splash/presentation/bloc/splash_bloc.dart';
@@ -31,6 +32,12 @@ void initBlocModule(GetIt serviceLocator) {
       loginUseCase: serviceLocator<LoginUseCase>(),
       sessionController: serviceLocator<SessionController>(),
       store: serviceLocator<SessionStore>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<ForgetBloc>(
+    () => ForgetBloc(
+
     ),
   );
 }
