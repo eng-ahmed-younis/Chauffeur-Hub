@@ -167,36 +167,50 @@ lib/
 This sequence demonstrates the initialization timeline from the moment the user taps the app icon, through dependency injection registration, to the Splash screen.
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant OS as Mobile OS
-    participant Main as main()
-    participant DI as GetIt
-    participant App as ChauffeurApp
-    participant Router as GoRouter
-    participant Splash as SplashBloc
+flowchart TD
+    subgraph Launch ["1. App Launch"]
+        User(["📱 User Taps App Icon"]) --> OS["Mobile OS"]
+        OS --> Main["main() in main_flavors"]
+        Main --> InitBind["WidgetsFlutterBinding.ensureInitialized()"]
+        InitBind --> SysUI["SystemChrome (UI & Orientation Config)"]
+    end
 
-    User->>OS: Tap App Icon
-    OS->>Main: Launch App (main_flavors)
-    Main->>Main: WidgetsFlutterBinding.ensureInitialized()
-    Main->>Main: SystemChrome (UI & Orientation Config)
+    subgraph DI ["2. Dependency Injection Phase (GetIt)"]
+        SysUI --> ConfigDI["configureDependencies()"]
+        ConfigDI --> CoreMod["initCoreModule()<br>• Firebase Init<br>• SharedPreferences<br>• SecureStorage<br>• SessionController"]
+        CoreMod --> NetMod["initNetworkModule()<br>• DioFactory & ApiTargets"]
+        NetMod --> RepoMod["initRepositoryModule()"]
+        RepoMod --> UCMod["initUseCaseModule()"]
+        UCMod --> BlocMod["initBlocModule()<br>• SplashBloc<br>• LoginBloc"]
+        BlocMod --> NavMod["initNavigationModule()<br>• GoRouter setup"]
+    end
 
-    note over Main,DI: Dependency Injection Phase
-    Main->>DI: configureDependencies()
-    DI->>DI: initCoreModule() (Firebase, Storage, Session)
-    DI->>DI: initNetworkModule() (DioFactory)
-    DI->>DI: initRepositoryModule()
-    DI->>DI: initUseCaseModule()
-    DI->>DI: initBlocModule()
-    DI->>DI: initNavigationModule()
+    subgraph AppRun ["3. App Mounting & Navigation"]
+        NavMod --> RunApp["runApp(ChauffeurApp)"]
+        RunApp --> ScreenUtil["ScreenUtilInit (Responsive Canvas)"]
+        ScreenUtil --> MatApp["MaterialApp.router"]
+        MatApp --> RouterEval["GoRouter Evaluates Route"]
+        RouterEval -->|initialLocation: /splash| SplashUI["SplashScreen Mounted"]
+    end
 
-    Main->>App: runApp(ChauffeurApp())
-    App->>App: ScreenUtilInit (Responsive UI config)
-    App->>Router: MaterialApp.router(routerConfig)
-    Router->>Splash: Route to AppRoutes.splash
-    Splash->>Splash: SplashStarted Event Triggered
-    note over Splash: SplashBloc fetches FCM token,<br>local session, app settings,<br>and driver status
+    subgraph SplashExec ["4. Splash BLoC Execution"]
+        SplashUI --> SplashBlocEv["SplashBloc.add(SplashStarted)"]
+        SplashBlocEv --> FCM["FcmService.getFcmToken()"]
+        SplashBlocEv --> Restore["session.restore()"]
+        SplashBlocEv --> Settings["getSettingsUseCase()"]
+        SplashBlocEv --> Status["getDriverStatusUseCase()"]
+    end
+
+    %% Styling
+    classDef launch fill:#0B132B,stroke:#4A90E2,stroke-width:2px,color:#FFFFFF;
+    classDef di fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
+    classDef app fill:#131952,stroke:#D4AF37,stroke-width:2px,color:#FFFFFF;
+    classDef exec fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
+
+    class User,OS,Main,InitBind,SysUI launch;
+    class ConfigDI,CoreMod,NetMod,RepoMod,UCMod,BlocMod,NavMod di;
+    class RunApp,ScreenUtil,MatApp,RouterEval,SplashUI app;
+    class SplashBlocEv,FCM,Restore,Settings,Status exec;
 ```
 
 ---
