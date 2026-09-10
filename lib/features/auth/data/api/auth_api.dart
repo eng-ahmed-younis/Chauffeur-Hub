@@ -8,9 +8,13 @@ import 'package:chauffeur_hub/features/auth/data/dto/recovery_challenge_dto.dart
 // ignore_for_file: unused_element
 
 final class AuthApi {
-  AuthApi({required this._dio});
+  AuthApi({
+    required this._chauffeurDio,
+    required this._apexDio,
+  });
 
-  final Dio _dio;
+  final Dio _chauffeurDio;
+  final Dio _apexDio;
 
   Future<LoginDriverDto> login({
     required String email,
@@ -18,7 +22,7 @@ final class AuthApi {
     required String deviceToken,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _apexDio.post(
         AuthEndpoints.login,
         data: {
           'app': 'chauffeur',
@@ -47,7 +51,7 @@ final class AuthApi {
 
   Future<RecoveryChallengeDto> requestPasswordReset(String email) async {
     try {
-      final response = await _dio.post(
+      final response = await _chauffeurDio.post(
         AuthEndpoints.forgotPassword,
         data: {'email': email},
       );
@@ -74,7 +78,7 @@ final class AuthApi {
     required int verificationCode,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _chauffeurDio.post(
         AuthEndpoints.verifyOtp,
         data: {
           'email': email,
@@ -105,7 +109,7 @@ final class AuthApi {
     required String confirmPassword,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _chauffeurDio.post(
         AuthEndpoints.resetPassword,
         data: {
           'email': email,

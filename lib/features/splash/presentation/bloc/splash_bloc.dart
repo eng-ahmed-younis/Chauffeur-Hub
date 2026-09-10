@@ -13,6 +13,9 @@ import '../../domain/use_case/get_driver_status_use_case.dart';
 import '../../../../core/shared/domain/models/driver_status.dart';
 import '../../../../core/services/network/base/error_message.dart';
 
+import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
+import 'package:chauffeur_hub/core/storage/session_store.dart';
+
 export 'splash_event.dart';
 export 'splash_state.dart';
 
@@ -22,6 +25,8 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     required this.checkAppUpdateUseCase,
     required this.getDriverStatusUseCase,
     required this.session,
+    required this.fcmService,
+    required this.store,
   }) : super(const SplashState()) {
     on<SplashStarted>(_onStarted);
     on<SplashUpdatePressed>(
@@ -40,24 +45,39 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final CheckAppUpdateUseCase checkAppUpdateUseCase;
   final GetDriverStatusUseCase getDriverStatusUseCase;
   final SessionController session;
+  final FcmService fcmService;
+  final SessionStore store;
 
   Future<void> _onStarted(
     SplashStarted event,
     Emitter<SplashState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
+
+    // Fetch and save FCM Token asynchronously in SessionStore on splash screen
+    fcmService.getFcmToken().then((token) {
+      if (token != null && token.isNotEmpty) {
+        store.saveFcmToken(token);
+      }
+    }).catchError((_) {});
+
+    // 1. Fast local session restoration (< 10ms)
+    await session.restore();
+
+    // 2. If user is not authenticated, navigate to Login immediately without waiting for network!
+    if (!session.isAuthenticated) {
+      emit(state.copyWith(isLoading: false));
+      _navigate(emit, SplashDestination.login);
+      return;
+    }
+
+    // 3. For logged-in users, run update & settings checks with a short 1.5s timeout
     Object? settingsError;
     Object? appInfoError;
     AppSettings? settings;
     AppUpdateType? updateType;
 
-    // runs multiple asynchronous operations concurrently (in parallel) and waits for all
-    // of them to complete before moving to the next line of code.
     await Future.wait([
-      // The session.restore() method is responsible for restoring the user's session from persistent storage
-      //(like SharedPreferences or SecureStorage).
-      session.restore(),
-
       getSettingsUseCase()
           .then<void>((value) {
             settings = value;
@@ -72,7 +92,7 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
           .catchError((Object error) {
             appInfoError = error;
           }),
-    ]).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
+    ]).timeout(const Duration(milliseconds: 1500), onTimeout: () => <void>[]);
 
     settings ??= getSettingsUseCase.readCached();
 

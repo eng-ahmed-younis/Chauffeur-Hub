@@ -95,6 +95,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "750706326635-58fq27mr6ip2mln9htm07ujk5apfs4ak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shift.chauffeur.driver",
+            "certificate_hash": "a5aebc145de368aaf4352f0b5f8f29cd651e786f"
+          }
+        },
+        {
+          "client_id": "750706326635-uj95d7mo6j7ah3msv8tp8ro53r3mg40u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shift.chauffeur.driver",
+            "certificate_hash": "dad0122c74bd5149419b8d00260d56683d19073e"
+          }
+        },
+        {
           "client_id": "750706326635-dusp130brrd3pussdmr3ub59urfoi0o7.apps.googleusercontent.com",
           "client_type": 3
         }

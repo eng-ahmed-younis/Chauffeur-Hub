@@ -13,6 +13,8 @@ class CoreTextField extends StatefulWidget {
   final double? width;
   final bool? obscureText;
   final Widget? suffixIcon;
+  final String? errorText; // Added to support showing an error message
+  final ValueChanged<String>? onChanged;
 
   const CoreTextField({
     super.key,
@@ -27,6 +29,8 @@ class CoreTextField extends StatefulWidget {
     this.height,
     this.width,
     this.suffixIcon,
+    this.errorText, // Allow passing an error text
+    this.onChanged,
   });
 
   @override
@@ -54,6 +58,7 @@ class _CoreTextFieldState extends State<CoreTextField> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final labelText = widget.label;
+    final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
 
     Widget? suffix;
     if (widget.suffixIcon != null) {
@@ -87,21 +92,31 @@ class _CoreTextFieldState extends State<CoreTextField> {
             controller: widget.controller,
             obscureText: _isObscured,
             keyboardType: widget.keyboardType,
+            onChanged: widget.onChanged,
+            style: TextStyle(
+              color: hasError ? colors.systemRedBright : colors.grey900Text,
+            ),
             decoration: InputDecoration(
               filled: true,
               fillColor: widget.fillColor ?? colors.grey100,
               hintText: widget.hint,
               hintStyle: TextStyle(color: widget.hintColor ?? colors.grey800),
               suffixIcon: suffix,
+              // Normal state border
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
+                borderSide: hasError
+                    ? BorderSide(color: colors.systemRedBright, width: 1.5)
+                    : BorderSide.none,
               ),
+              // Focused state border
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: widget.focusedBorderColor ?? colors.primaryBlue100,
-                  width: 1,
+                  color: hasError
+                      ? colors.systemRedBright
+                      : (widget.focusedBorderColor ?? colors.primaryBlue100),
+                  width: 1.5,
                 ),
               ),
               contentPadding: widget.height != null
@@ -110,6 +125,31 @@ class _CoreTextFieldState extends State<CoreTextField> {
             ),
           ),
         ),
+        // Error Message Below TextField
+        if (hasError) ...[
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: colors.systemRedBright,
+                size: 16,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  widget.errorText!,
+                  style: TextStyle(
+                    color: colors.systemRedBright,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

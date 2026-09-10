@@ -1,3 +1,4 @@
+import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
 import 'package:get_it/get_it.dart';
 import '../../../../features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import '../../../storage/session_store.dart';
@@ -8,12 +9,7 @@ import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart'
 import '../../../../features/splash/domain/use_case/check_app_update_use_case.dart';
 import '../../../../features/splash/domain/use_case/get_driver_status_use_case.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_bloc.dart'
-
-
-
-
     show LoginBloc;
-
 
 void initBlocModule(GetIt serviceLocator) {
   // registerFactory is commonly used for BLoCs because a BLoC usually
@@ -24,6 +20,8 @@ void initBlocModule(GetIt serviceLocator) {
       checkAppUpdateUseCase: serviceLocator<CheckAppUpdateUseCase>(),
       getDriverStatusUseCase: serviceLocator<GetDriverStatusUseCase>(),
       session: serviceLocator<SessionController>(),
+      fcmService: serviceLocator<FcmService>(),
+      store: serviceLocator<SessionStore>(),
     ),
   );
 
@@ -32,6 +30,7 @@ void initBlocModule(GetIt serviceLocator) {
       loginUseCase: serviceLocator<LoginUseCase>(),
       sessionController: serviceLocator<SessionController>(),
       store: serviceLocator<SessionStore>(),
+      fcmService: serviceLocator<FcmService>(),
     ),
   );
 

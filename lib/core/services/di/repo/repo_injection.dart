@@ -29,7 +29,8 @@ void initRepositoryModule(GetIt serviceLocator) {
   serviceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       AuthApi(
-        dio: serviceLocator<Dio>(instanceName: ApiTarget.chauffeur.name),
+        chauffeurDio: serviceLocator<Dio>(instanceName: ApiTarget.chauffeur.name),
+        apexDio: serviceLocator<Dio>(instanceName: ApiTarget.apex.name),
       ),
     ),
   );

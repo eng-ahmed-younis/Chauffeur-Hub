@@ -16,6 +16,7 @@
   - Generic `ApiResponse<T>` wrapper with automatic JSON decoding and data validation (supporting both camelCase and snake_case backend keys).
   - Sealed class exception hierarchy (`ApiException`, `NetworkUnavailableException`, `UnauthorizedException`, `ServerApiException`, etc.).
   - `HttpCheck` & `NullableHttpCheck` extensions on `int` / `int?` for status code checking.
+- **Push Notifications (FCM)**: Managed via `FcmService` to securely fetch and store device registration tokens asynchronously during the splash sequence, automatically injecting the token into authentication workflows.
 - **Feature-First Clean Architecture**: Granular, decoupled domain models (`LoginDriver`, `RecoveryChallenge`, `AppSettings`, `SettingItem`, `AppInfo`, `AppUpdateType`) leveraging `Equatable` for value equality without code generation overhead.
 - **Enhanced App Logging**: Centralized `AppLogger` service with multi-level logging (`info`, `debug`, `warning`, `success`, `error`), formatted JSON output, and `kReleaseMode` production safety.
 - **Responsive & Adaptive Layouts**: Fluid design scaling across mobile and tablet form factors via `flutter_screenutil` and `DeviceMetadata`.
@@ -351,6 +352,7 @@ classDiagram
 - **Storage**: `flutter_secure_storage` (`^11.0.0`) & `shared_preferences` (`^2.5.5`)
 - **Value Equality**: `equatable` (`^2.1.0`)
 - **Device & Package Info**: `package_info_plus` & `device_info_plus`
+- **Push Notifications**: `firebase_core`, `firebase_messaging` (FCM)
 
 ---
 
