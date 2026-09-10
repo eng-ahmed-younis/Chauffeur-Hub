@@ -68,6 +68,8 @@ lib/
 │   │       │   ├── request_metadat_aInterceptor.dart # Device headers interceptor
 │   │       │   └── safe_log_Interceptor.dart      # Safe HTTP logger
 │   │       ├── dio_factory.dart        # Dio HTTP client factory & interceptors
+│   │   ├── notification/
+│   │   │   └── fcm_service.dart        # Firebase Cloud Messaging service
 │   │   └── shared/
 │   │       ├── data/
 │   │       │   ├── dto/
