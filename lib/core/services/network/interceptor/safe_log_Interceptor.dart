@@ -17,4 +17,14 @@ final class SafeLogInterceptor extends Interceptor {
     debugPrint('[RESPONSE] ${response.data}');
     super.onResponse(response, handler);
   }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    debugPrint(
+      '[HTTP ERROR] ${err.type} ${err.requestOptions.method} '
+      '${err.requestOptions.uri} ${err.response?.statusCode ?? ''}',
+    );
+    debugPrint('[HTTP ERROR DETAIL] ${err.message}');
+    super.onError(err, handler);
+  }
 }

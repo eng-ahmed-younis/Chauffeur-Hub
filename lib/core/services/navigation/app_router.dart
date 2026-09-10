@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../storage/session_controller.dart';
 
 
+
 GoRouter createAppRouter(SessionController session) {
   return GoRouter(
     initialLocation: AppRoutes.splash,

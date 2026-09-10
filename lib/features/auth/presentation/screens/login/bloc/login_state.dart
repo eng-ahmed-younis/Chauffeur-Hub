@@ -15,6 +15,8 @@ final class LoginState {
     this.errorMessage = DefaultValues.string,
     this.effect = LoginEffect.none,
     this.effectId = DefaultValues.integer,
+    this.emailErrorMessage,
+    this.passwordErrorMessage,
   });
 
   final String email;
@@ -22,6 +24,10 @@ final class LoginState {
   final bool hasLoginAttempted;
   final bool isEmailError;
   final bool isPasswordError;
+  // like Please enter a valid email
+  final String? emailErrorMessage;
+  // like Please enter a valid password
+  final String? passwordErrorMessage;
   final LoginStatus status;
   final String errorMessage;
   final LoginEffect effect;
@@ -36,7 +42,9 @@ final class LoginState {
     LoginStatus? status,
     String? errorMessage,
     LoginEffect? effect,
-    int? effectId, 
+    int? effectId,
+    String? emailErrorMessage,
+    String? passwordErrorMessage,
   }) {
     return LoginState(
       email: email ?? this.email,
@@ -48,6 +56,8 @@ final class LoginState {
       errorMessage: errorMessage ?? this.errorMessage,
       effect: effect ?? this.effect,
       effectId: effectId ?? this.effectId,
+      emailErrorMessage: emailErrorMessage ?? this.emailErrorMessage,
+      passwordErrorMessage: passwordErrorMessage ?? this.passwordErrorMessage,
     );
   }
 
@@ -64,6 +74,8 @@ final class LoginState {
           status == other.status &&
           errorMessage == other.errorMessage &&
           effect == other.effect &&
+          emailErrorMessage == other.emailErrorMessage &&
+          passwordErrorMessage == other.passwordErrorMessage &&
           effectId == other.effectId;
 
   @override
@@ -77,5 +89,7 @@ final class LoginState {
     errorMessage,
     effect,
     effectId,
+    emailErrorMessage,
+    passwordErrorMessage,
   );
 }

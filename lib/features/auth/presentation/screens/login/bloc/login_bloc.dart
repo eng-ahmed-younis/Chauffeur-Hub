@@ -1,3 +1,4 @@
+import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chauffeur_hub/core/utils/result.dart';
 import 'package:chauffeur_hub/core/utils/validators.dart';
@@ -6,35 +7,31 @@ import 'package:chauffeur_hub/core/storage/session_controller.dart';
 import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_event.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_state.dart';
-// ignore_for_file: unused_field
-
-
-// ignore_for_file: unused_local_variable
-
-// ignore_for_file: unused_element
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-
   LoginBloc({
     required this._loginUseCase,
     required this._sessionController,
     required this._store,
-  }) : super(const LoginState()) {
+    required this._fcmService,
+  })  : super(const LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_passwordChanged);
     on<OnForgotPasswordPressed>(_onForgotPasswordPressed);
     on<LoginSubmitted>(_onLoginSubmitted);
   }
-  
+
   final LoginUseCase _loginUseCase;
   final SessionController _sessionController;
-  final SessionStore _store ;
+  final SessionStore _store;
+  final FcmService _fcmService;
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginState> emit) {
     emit(
       state.copyWith(
         email: event.email,
         isEmailError: event.email.isNotEmpty && !isValidEmail(event.email),
+        emailErrorMessage: isValidEmail(event.email) ? null : 'Please enter a valid email',
         status: LoginStatus.initial,
       ),
     );
@@ -46,6 +43,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         password: event.password,
         isPasswordError:
             event.password.isNotEmpty && !isValidPassword(event.password),
+        passwordErrorMessage:
+            isValidPassword(event.password) ? null : 'Please enter a valid password',
+            //validatePasswordMessage(event.password),
         status: LoginStatus.initial,
       ),
     );
@@ -85,10 +85,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     emit(state.copyWith(status: LoginStatus.loading, errorMessage: ''));
 
+    final fcmToken = await _store.fcmToken ?? await _fcmService.getFcmToken() ?? '';
+
     final result = await _loginUseCase(
       email: state.email,
       password: state.password,
-      deviceToken: await _store.fcmToken ?? '',
+      deviceToken: fcmToken,
     );
 
     switch (result) {

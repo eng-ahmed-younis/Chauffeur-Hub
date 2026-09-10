@@ -24,8 +24,19 @@ final class SessionController extends ChangeNotifier {
     } on Object {
       // A storage failure should not leave the router permanently on splash.
       _token = null;
-    } finally {
-      // Mark startup complete even when no previous session can be restored.
+    }
+  }
+
+  /// Marks the initial session restoration as complete and notifies listeners (like [GoRouter]).
+  ///
+  /// Sets [_isReady] to `true` once all splash screen initialization checks
+  /// (token restoration, app update checks, and driver status fetching) finish.
+  /// Calling [notifyListeners] triggers [GoRouter]'s navigation guard to evaluate
+  /// route redirects away from the splash screen based on [isAuthenticated].
+  ///
+  /// Once [_isReady] is `true`, subsequent calls to this method will have no effect.
+  void markReady() {
+    if (!_isReady) {
       _isReady = true;
       notifyListeners();
     }

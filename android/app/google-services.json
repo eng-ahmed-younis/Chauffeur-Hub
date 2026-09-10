@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "750706326635",
+    "firebase_url": "https://shift-uat-default-rtdb.firebaseio.com",
+    "project_id": "shift-uat",
+    "storage_bucket": "shift-uat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750706326635:android:24b1dc5f1ba5d2ed85452e",
+        "android_client_info": {
+          "package_name": "com.innovitics.app.shift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750706326635-ikbkf8bga06ubr0ncmevdpdj22hjcch2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.innovitics.app.shift",
+            "certificate_hash": "a5aebc145de368aaf4352f0b5f8f29cd651e786f"
+          }
+        },
+        {
+          "client_id": "750706326635-dusp130brrd3pussdmr3ub59urfoi0o7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI3qbqvX0iVnDCQt3WGoqOos-7VY6vvEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750706326635-2d6iuhttha8javqql5v843cta1bkqqjv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750706326635-n1ugqkpo1tit1fle5mdi6fdnsioq45lh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.innovitics.Shift"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750706326635:android:7ccef8cf6fd0769a85452e",
+        "android_client_info": {
+          "package_name": "com.innovitics.app.shift.uat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750706326635-dusp130brrd3pussdmr3ub59urfoi0o7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI3qbqvX0iVnDCQt3WGoqOos-7VY6vvEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750706326635-2d6iuhttha8javqql5v843cta1bkqqjv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750706326635-n1ugqkpo1tit1fle5mdi6fdnsioq45lh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.innovitics.Shift"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750706326635:android:03edfeceb089a74d85452e",
+        "android_client_info": {
+          "package_name": "com.shift.chauffeur.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750706326635-58fq27mr6ip2mln9htm07ujk5apfs4ak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shift.chauffeur.driver",
+            "certificate_hash": "a5aebc145de368aaf4352f0b5f8f29cd651e786f"
+          }
+        },
+        {
+          "client_id": "750706326635-uj95d7mo6j7ah3msv8tp8ro53r3mg40u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shift.chauffeur.driver",
+            "certificate_hash": "dad0122c74bd5149419b8d00260d56683d19073e"
+          }
+        },
+        {
+          "client_id": "750706326635-dusp130brrd3pussdmr3ub59urfoi0o7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI3qbqvX0iVnDCQt3WGoqOos-7VY6vvEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750706326635-2d6iuhttha8javqql5v843cta1bkqqjv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "750706326635-n1ugqkpo1tit1fle5mdi6fdnsioq45lh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.innovitics.Shift"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

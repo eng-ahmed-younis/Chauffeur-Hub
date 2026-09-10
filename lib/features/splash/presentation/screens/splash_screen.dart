@@ -6,6 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/services/navigation/app_routes.dart';
 import 'package:chauffeur_hub/core/theme/system/app_system_bar.dart';
+import 'package:chauffeur_hub/core/utils/extentions/theme_context_extention.dart';
+
+
 
 
 class SplashScreen extends StatelessWidget {
@@ -24,8 +27,7 @@ class _SplashContent extends StatelessWidget {
   const _SplashContent();
 
   void _onStateChanged(BuildContext context, SplashState state) {
-    if (state.effect == SplashEffect.navigate &&
-        state.destination != null) {
+    if (state.effect == SplashEffect.navigate && state.destination != null) {
       switch (state.destination!) {
         case SplashDestination.login:
           context.go(AppRoutes.login);
@@ -49,9 +51,7 @@ class _SplashContent extends StatelessWidget {
           action: SnackBarAction(
             label: 'OK',
             onPressed: () {
-              context
-                  .read<SplashBloc>()
-                  .add(const SplashErrorDismissed());
+              context.read<SplashBloc>().add(const SplashErrorDismissed());
             },
           ),
         ),
@@ -61,23 +61,15 @@ class _SplashContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Scaffold(
       body: BlocListener<SplashBloc, SplashState>(
         listenWhen: (previous, current) =>
             previous.effectId != current.effectId,
         listener: _onStateChanged,
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF0B132B),
-                Color(0xFF131952),
-                Color(0xFF1C2541),
-              ],
-            ),
-          ),
+          decoration: BoxDecoration(color: colors.grey900Text),
           child: SafeArea(
             child: Center(
               child: Column(
@@ -98,8 +90,7 @@ class _SplashContent extends StatelessWidget {
                         ),
                       ],
                       border: Border.all(
-                        color: const Color(0xFFD4AF37)
-                            .withValues(alpha: 0.3),
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -117,9 +108,9 @@ class _SplashContent extends StatelessWidget {
 
                   // App Name
                   Text(
-                    'Chauffeur Hub',
+                    'Shift Driver',
                     style: TextStyle(
-                      fontSize: 28.sp,
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       letterSpacing: 1.2,
@@ -143,7 +134,7 @@ class _SplashContent extends StatelessWidget {
                         child: const CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFFD4AF37),
+                            Color.fromARGB(255, 155, 131, 50),
                           ),
                         ),
                       );

@@ -9,6 +9,30 @@ android {
     compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
+    buildFeatures {
+        resValues = true
+    }
+
+    flavorDimensions += "default"
+    productFlavors {
+        create("dev") {
+            dimension = "default"
+            resValue("string", "app_name", "Chauffeur Dev")
+        }
+        create("staging") {
+            dimension = "default"
+            resValue("string", "app_name", "Chauffeur Staging")
+        }
+        create("uat") {
+            dimension = "default"
+            resValue("string", "app_name", "Chauffeur UAT")
+        }
+        create("prod") {
+            dimension = "default"
+            resValue("string", "app_name", "Chauffeur Hub")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -33,11 +57,21 @@ android {
         }
     }
 
+    signingConfigs {
+        create("project_debug") {
+            storeFile = file("project_debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("project_debug")
+        }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("project_debug")
         }
     }
 }
