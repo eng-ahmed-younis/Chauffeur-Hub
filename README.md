@@ -172,7 +172,7 @@ sequenceDiagram
     actor User
     participant OS as Mobile OS
     participant Main as main()
-    participant DI as GetIt (ServiceLocator)
+    participant DI as GetIt
     participant App as ChauffeurApp
     participant Router as GoRouter
     participant Splash as SplashBloc
