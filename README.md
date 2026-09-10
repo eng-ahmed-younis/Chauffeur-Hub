@@ -163,7 +163,45 @@ lib/
 
 ## 🏗️ System Architecture Diagrams
 
-### 1. High-Level Architecture & Flow
+### 1. App Startup Sequence & Dependency Injection Flow
+This sequence demonstrates the initialization timeline from the moment the user taps the app icon, through dependency injection registration, to the Splash screen.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant OS as Mobile OS
+    participant Main as main()
+    participant DI as GetIt (ServiceLocator)
+    participant App as ChauffeurApp
+    participant Router as GoRouter
+    participant Splash as SplashBloc
+
+    User->>OS: Tap App Icon
+    OS->>Main: Launch App (main_flavors)
+    Main->>Main: WidgetsFlutterBinding.ensureInitialized()
+    Main->>Main: SystemChrome (UI & Orientation Config)
+
+    note over Main,DI: Dependency Injection Phase
+    Main->>DI: configureDependencies()
+    DI->>DI: initCoreModule() (Firebase, Storage, Session)
+    DI->>DI: initNetworkModule() (DioFactory)
+    DI->>DI: initRepositoryModule()
+    DI->>DI: initUseCaseModule()
+    DI->>DI: initBlocModule()
+    DI->>DI: initNavigationModule()
+
+    Main->>App: runApp(ChauffeurApp())
+    App->>App: ScreenUtilInit (Responsive UI config)
+    App->>Router: MaterialApp.router(routerConfig)
+    Router->>Splash: Route to AppRoutes.splash
+    Splash->>Splash: SplashStarted Event Triggered
+    note over Splash: SplashBloc fetches FCM token,<br>local session, app settings,<br>and driver status
+```
+
+---
+
+### 2. High-Level Architecture & Flow
 
 ```mermaid
 graph TD
@@ -274,7 +312,7 @@ graph TD
 
 ---
 
-### 2. Core Network & Exception Class Diagram
+### 3. Core Network & Exception Class Diagram
 
 ```mermaid
 classDiagram
