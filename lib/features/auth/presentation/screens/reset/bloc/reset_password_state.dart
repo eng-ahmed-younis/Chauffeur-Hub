@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:chauffeur_hub/core/utils/ui_effect.dart';
 import '../../../../../../core/utils/default_values.dart';
 
 enum LoginStatus { initial, loading, success, failure }
-
-enum ResetPasswordEffect { none, navigate, showError }
 
 enum ResetDestination { login }
 
@@ -14,7 +13,7 @@ final class ResetPasswordState extends Equatable {
   final int passwordError;
   final LoginStatus status;
   final String errorMessage;
-  final ResetPasswordEffect effect;
+  final UiEffect effect;
   final ResetDestination? destination;
   final int effectId;
 
@@ -25,7 +24,7 @@ final class ResetPasswordState extends Equatable {
     this.passwordError = DefaultValues.integer,
     this.status = LoginStatus.initial,
     this.errorMessage = DefaultValues.string,
-    this.effect = ResetPasswordEffect.none,
+    this.effect = UiEffect.none,
     this.effectId = DefaultValues.integer,
     this.destination,
   });
@@ -37,7 +36,7 @@ final class ResetPasswordState extends Equatable {
     int? passwordError,
     LoginStatus? status,
     String? errorMessage,
-    ResetPasswordEffect? effect,
+    UiEffect? effect,
     int? effectId,
     ResetDestination? destination,
   }) {

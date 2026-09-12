@@ -1,6 +1,9 @@
 import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
 import 'package:get_it/get_it.dart';
+import '../../../../features/auth/domain/usecases/forget_password_use_case.dart';
+import '../../../../features/auth/domain/usecases/verify_otp_use_case.dart';
 import '../../../../features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
+import '../../../../features/auth/presentation/screens/otp/bloc/otp_bloc.dart';
 import '../../../storage/session_store.dart';
 import '../../../storage/session_controller.dart';
 import '../../../../features/splash/presentation/bloc/splash_bloc.dart';
@@ -36,7 +39,14 @@ void initBlocModule(GetIt serviceLocator) {
 
   serviceLocator.registerFactory<ForgetBloc>(
     () => ForgetBloc(
+      forgetPasswordUseCase: serviceLocator<ForgetPasswordUseCase>(),
+    ),
+  );
 
+  serviceLocator.registerFactory<OtpBloc>(
+    () => OtpBloc(
+      verifyOtpUseCase: serviceLocator<VerifyOtpUseCase>(),
+      forgetPasswordUseCase: serviceLocator<ForgetPasswordUseCase>(),
     ),
   );
 }

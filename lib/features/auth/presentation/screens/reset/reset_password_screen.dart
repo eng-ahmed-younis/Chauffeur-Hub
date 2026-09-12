@@ -1,3 +1,4 @@
+import 'package:chauffeur_hub/core/utils/ui_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,13 +18,10 @@ class _ResetPasswordContent extends StatelessWidget {
   const _ResetPasswordContent();
 
   void _onStateChanged(BuildContext context, ResetPasswordState state) {
-    if (state.effect == ResetPasswordEffect.navigate && state.destination != null) {
-      switch(state.destination) {
-        case ResetDestination.login: {
+    if (state.effect == UiEffect.navigate && state.destination != null) {
+      switch (state.destination!) {
+        case ResetDestination.login:
           context.go(AppRoutes.login);
-          return;
-        }
-        default: null;
           return;
       }
     }

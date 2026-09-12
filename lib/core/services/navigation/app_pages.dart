@@ -1,4 +1,7 @@
+import 'package:chauffeur_hub/core/services/navigation/keys/auth_navigation_keys.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
+import 'package:chauffeur_hub/features/auth/presentation/screens/otp/bloc/otp_bloc.dart';
+import 'package:chauffeur_hub/features/auth/presentation/screens/otp/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -51,6 +54,24 @@ abstract final class AppPages {
         create: (context) => serviceLocator<ForgetBloc>(),
         child: const ForgetPasswordScreen(),
       ),
-    )
+    ),
+    GoRoute(
+      path: AppRoutes.otpPath,
+      name: AppRoutes.otpPath,
+      builder: (context, state) {
+        final email = state.uri.queryParameters[AuthNavKeys.email] ?? '';
+        final verificationIdStr = state.uri.queryParameters[AuthNavKeys.verificationId] ?? '0';
+        final verificationId = int.tryParse(verificationIdStr) ?? 0;
+
+        return BlocProvider<OtpBloc>(
+          create: (context) => serviceLocator<OtpBloc>()
+            ..add(OtpEmailChanged(email: email)),
+          child: OtpScreen(
+            email: email,
+            verificationId: verificationId,
+          ),
+        );
+      },
+    ),
   ];
 }

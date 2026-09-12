@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/system/app_system_bar.dart';
 import 'package:chauffeur_hub/core/widgets/core_Text_field.dart';
 import 'package:chauffeur_hub/core/widgets/base_action_button.dart';
+import 'package:chauffeur_hub/core/widgets/core_error_bottom_sheet.dart';
 import '../../../../../core/utils/extentions/theme_context_extention.dart';
 import 'package:chauffeur_hub/features/auth/presentation/widgets/login_welcome_text.dart';
 import 'package:chauffeur_hub/features/auth/presentation/widgets/forget_password_text.dart';
@@ -45,8 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Handle Errors
     if (state.status == LoginStatus.failure && state.errorMessage.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.errorMessage)),
+      CoreErrorBottomSheet.show(
+        context,
+        title: 'Login Failed',
+        message: state.errorMessage,
       );
     }
   }

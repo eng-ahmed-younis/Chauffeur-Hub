@@ -4,8 +4,8 @@ import 'package:chauffeur_hub/core/services/network/base/api_exception.dart';
 import 'package:chauffeur_hub/features/auth/domain/models/login_driver.dart';
 import 'package:chauffeur_hub/features/auth/domain/repo/auth_repository.dart';
 import 'package:chauffeur_hub/features/auth/data/mapper/login_driver_mapper.dart';
-import 'package:chauffeur_hub/features/auth/domain/models/recovery_challenge.dart';
-import 'package:chauffeur_hub/features/auth/data/mapper/recovery_challenge_mapper.dart';
+import 'package:chauffeur_hub/features/auth/domain/models/forget_password.dart';
+import 'package:chauffeur_hub/features/auth/data/mapper/forget_password_mapper.dart';
 
 final class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this._api);
@@ -31,9 +31,9 @@ final class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<RecoveryChallenge>> requestPasswordReset(String email) async {
+  Future<Result<ForgetPassword>> forgetPasswordRequest(String email) async {
     try {
-      final dto = await _api.requestPasswordReset(email);
+      final dto = await _api.requestPasswordForget(email);
       return Result.success(dto.toDomain());
     } on ApiException catch (error) {
       return Result.failure(error);
@@ -59,7 +59,7 @@ final class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<RecoveryChallenge>> resetPassword({
+  Future<Result<ForgetPassword>> resetPassword({
     required String email,
     required String otpCode,
     required int verificationId,
