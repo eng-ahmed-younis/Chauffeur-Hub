@@ -8,7 +8,9 @@
 
 - **Luxury Splash Screen & Branding**: Animated entrance with custom emblem, gradient theme (`#0B132B` to `#1C2541`), gold accents (`#D4AF37`), and automated BLoC initialization flow.
 - **Secure Authentication & Session Management**: Powered by `SessionController`, `SessionStore`, `LoginBloc`, and encrypted local storage (`flutter_secure_storage`). Auto-redirects via `GoRouter` auth guards.
-- **Declarative Type-Safe Routing**: Route management with `GoRouter` (`AppRouter`, `AppRoutes`, `AppPages`) supporting compile-time typed parameters.
+- **Complete Password Recovery Flow**: Forgot password request, OTP code verification, and secure Reset Password screens backed by feature-first BLoCs (`ForgetBloc`, `OtpBloc`, `ResetPasswordBloc`) and typed request payloads (`ResetPassword`).
+- **Real Satellite Map & Geolocator Integration**: Full-screen interactive map component (`CoreMap`) powered by `google_maps_flutter` and `geolocator`, featuring automatic GPS location permission handling, live position tracking, and satellite imagery styling.
+- **Declarative Type-Safe Routing**: Route management with `GoRouter` (`AppRouter`, `AppRoutes`, `AppPages`) supporting compile-time typed parameters and secure backstack clearing on critical navigation events.
 - **Multi-Target Network Infrastructure**:
   - `DioFactory` configured with `AppEnvironment`, `SessionController`, `Connectivity`, and `DeviceMetadata`.
   - Multi-service target registration using type-safe `ApiTarget` enums (`chauffeur`, `settings`, `notifications`, `apex`).
