@@ -1,18 +1,20 @@
 import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
+import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart';
+import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_bloc.dart'
+    show LoginBloc;
 import 'package:get_it/get_it.dart';
+
 import '../../../../features/auth/domain/usecases/forget_password_use_case.dart';
 import '../../../../features/auth/domain/usecases/verify_otp_use_case.dart';
 import '../../../../features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import '../../../../features/auth/presentation/screens/otp/bloc/otp_bloc.dart';
-import '../../../storage/session_store.dart';
-import '../../../storage/session_controller.dart';
-import '../../../../features/splash/presentation/bloc/splash_bloc.dart';
-import '../../../../features/splash/domain/use_case/get_settings_use_case.dart';
-import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart';
+import '../../../../features/auth/presentation/screens/reset/bloc/reset_password_bloc.dart';
 import '../../../../features/splash/domain/use_case/check_app_update_use_case.dart';
 import '../../../../features/splash/domain/use_case/get_driver_status_use_case.dart';
-import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_bloc.dart'
-    show LoginBloc;
+import '../../../../features/splash/domain/use_case/get_settings_use_case.dart';
+import '../../../../features/splash/presentation/bloc/splash_bloc.dart';
+import '../../../storage/session_controller.dart';
+import '../../../storage/session_store.dart';
 
 void initBlocModule(GetIt serviceLocator) {
   // registerFactory is commonly used for BLoCs because a BLoC usually
@@ -31,7 +33,6 @@ void initBlocModule(GetIt serviceLocator) {
   serviceLocator.registerFactory<LoginBloc>(
     () => LoginBloc(
       loginUseCase: serviceLocator<LoginUseCase>(),
-      sessionController: serviceLocator<SessionController>(),
       store: serviceLocator<SessionStore>(),
       fcmService: serviceLocator<FcmService>(),
     ),
@@ -46,6 +47,12 @@ void initBlocModule(GetIt serviceLocator) {
   serviceLocator.registerFactory<OtpBloc>(
     () => OtpBloc(
       verifyOtpUseCase: serviceLocator<VerifyOtpUseCase>(),
+      forgetPasswordUseCase: serviceLocator<ForgetPasswordUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<ResetPasswordBloc>(
+    () => ResetPasswordBloc(
       forgetPasswordUseCase: serviceLocator<ForgetPasswordUseCase>(),
     ),
   );

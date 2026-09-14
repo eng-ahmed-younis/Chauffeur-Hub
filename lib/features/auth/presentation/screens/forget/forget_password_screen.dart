@@ -1,14 +1,16 @@
+import 'dart:async';
+
+import 'package:chauffeur_hub/core/services/navigation/keys/auth_navigation_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:chauffeur_hub/core/services/navigation/keys/auth_navigation_keys.dart';
 
 import '../../../../../core/services/navigation/app_routes.dart';
 import '../../../../../core/utils/extentions/theme_context_extention.dart';
 import '../../../../../core/utils/ui_effect.dart';
 import '../../../../../core/widgets/base_action_button.dart';
 import '../../../../../core/widgets/core_error_bottom_sheet.dart';
-import '../../../../../core/widgets/core_Text_field.dart';
+import '../../../../../core/widgets/core_text_field.dart';
 import 'bloc/forget_bloc.dart';
 import 'bloc/forget_event.dart';
 import 'bloc/forget_state.dart';
@@ -48,7 +50,7 @@ class _ForgetPasswordContentState extends State<_ForgetPasswordContent> {
     if (state.effect == UiEffect.navigate) {
       switch (state.destination) {
         case ForgetPasswordDestination.otp:
-          context.pushNamed(
+          unawaited(context.pushNamed(
             AppRoutes.otpPath,
             queryParameters: {
               AuthNavKeys.email: _emailController.text.isNotEmpty
@@ -56,7 +58,7 @@ class _ForgetPasswordContentState extends State<_ForgetPasswordContent> {
                   : state.email,
               AuthNavKeys.verificationId: state.verificationId.toString(),
             },
-          );
+          ));
           break;
         default:
           break;
@@ -64,11 +66,11 @@ class _ForgetPasswordContentState extends State<_ForgetPasswordContent> {
     }
 
     if (state.effect == UiEffect.showError) {
-      CoreErrorBottomSheet.show(
+      unawaited(CoreErrorBottomSheet.show<void>(
         context,
         title: 'Request Failed',
         message: 'Failed to send OTP code to the email address.',
-      );
+      ));
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/services/navigation/app_routes.dart';
+import '../../../../../core/services/navigation/keys/auth_navigation_keys.dart';
 import '../../../../../core/utils/extentions/theme_context_extention.dart';
 import '../../../../../core/utils/ui_effect.dart';
 import '../../../../../core/widgets/base_action_button.dart';
@@ -12,14 +13,15 @@ import '../../../../../core/widgets/core_pin_code_field.dart';
 import 'bloc/otp_bloc.dart';
 
 class OtpScreen extends StatelessWidget {
-  final String email;
-  final int verificationId;
 
   const OtpScreen({
     super.key,
     required this.email,
     required this.verificationId,
   });
+
+  final String email;
+  final int verificationId;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +33,13 @@ class OtpScreen extends StatelessWidget {
 }
 
 class _OtpContent extends StatefulWidget {
-  final String email;
-  final int verificationId;
 
   const _OtpContent({
     required this.email,
     required this.verificationId,
   });
+  final String email;
+  final int verificationId;
 
   @override
   State<_OtpContent> createState() => _OtpContentState();
@@ -60,22 +62,30 @@ class _OtpContentState extends State<_OtpContent> {
 
   void _onStateChanged(BuildContext context, OtpState state) {
     if (state.effect == UiEffect.navigate) {
-      context.pushNamed(
-        AppRoutes.resetPasswordPath,
-        queryParameters: {
-          'email': widget.email,
-          'verificationId': widget.verificationId.toString(),
-          'otpCode': state.otpCode,
-        },
-      );
+      switch (state.destination) {
+        case OtpDestination.login:
+          break;
+        case OtpDestination.resetPassword:
+          unawaited(context.pushNamed(
+            AppRoutes.resetPasswordPath,
+            queryParameters: {
+              AuthNavKeys.email: widget.email,
+              AuthNavKeys.verificationId: widget.verificationId.toString(),
+              AuthNavKeys.otpCode: state.otpCode,
+            },
+          ));
+          break;
+        case null:
+          break;
+      }
     }
 
     if (state.effect == UiEffect.showError) {
-      CoreErrorBottomSheet.show(
+      unawaited(CoreErrorBottomSheet.show<void>(
         context,
         title: 'Verification Failed',
         message: state.otpErrorMessage ?? 'Invalid or expired code.',
-      );
+      ));
     }
   }
 
@@ -197,13 +207,13 @@ class _OtpContentState extends State<_OtpContent> {
 /// Isolated Timer Widget so ticking every second only rebuilds the timer text
 /// without rebuilding the parent widget tree or resetting TextEditingControllers.
 class _OtpTimerWidget extends StatefulWidget {
-  final int initialSeconds;
-  final VoidCallback onResend;
 
   const _OtpTimerWidget({
     required this.initialSeconds,
     required this.onResend,
   });
+  final int initialSeconds;
+  final VoidCallback onResend;
 
   @override
   State<_OtpTimerWidget> createState() => _OtpTimerWidgetState();

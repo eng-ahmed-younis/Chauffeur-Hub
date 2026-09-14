@@ -1,6 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chauffeur_hub/core/utils/result.dart';
 import 'package:chauffeur_hub/core/utils/ui_effect.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../../core/shared/request/otp_request.dart';
 import '../../../../domain/usecases/forget_password_use_case.dart';
 import '../../../../domain/usecases/verify_otp_use_case.dart';
 import 'otp_event.dart';
@@ -66,9 +68,12 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     emit(state.copyWith(isLoading: true, isOtpError: false, otpErrorMessage: null));
 
     final result = await _verifyOtpUseCase(
-      email: state.email,
-      verificationId: event.verificationId,
-      verificationCode: parsedCode,
+      otpRequest: OtpRequest(
+        email: state.email,
+        verificationId: event.verificationId,
+        verificationCode: parsedCode,
+        isCheck: true
+      ),
     );
 
     switch (result) {
@@ -88,6 +93,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
             isLoading: false,
             otpCode: codeString,
             effect: UiEffect.navigate,
+            destination: OtpDestination.resetPassword,
             effectId: state.effectId + 1,
           ),
         );

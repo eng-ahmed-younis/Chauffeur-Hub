@@ -1,14 +1,16 @@
 import 'package:chauffeur_hub/core/services/navigation/keys/auth_navigation_keys.dart';
-import 'package:chauffeur_hub/features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/otp/bloc/otp_bloc.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/otp/otp_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:chauffeur_hub/features/auth/presentation/screens/reset/bloc/reset_password_bloc.dart';
+import 'package:chauffeur_hub/features/auth/presentation/screens/reset/reset_password_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/auth/presentation/screens/forget/bloc/forget_bloc.dart';
 import '../../../features/auth/presentation/screens/forget/forget_password_screen.dart';
 import '../../../features/auth/presentation/screens/login/bloc/login_bloc.dart';
 import '../../../features/auth/presentation/screens/login/login.screen.dart';
+import '../../../features/home/presentation/home_screen.dart';
 import '../../../features/splash/presentation/bloc/splash_bloc.dart';
 import '../../../features/splash/presentation/screens/splash_screen.dart';
 import '../../storage/session_controller.dart';
@@ -35,18 +37,7 @@ abstract final class AppPages {
     ),
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Home'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () => session.signOut(),
-            ),
-          ],
-        ),
-        body: const Center(child: Text('Welcome to Chauffeur Hub Home')),
-      ),
+      builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
       path: AppRoutes.forgotPassword,
@@ -68,6 +59,25 @@ abstract final class AppPages {
             ..add(OtpEmailChanged(email: email)),
           child: OtpScreen(
             email: email,
+            verificationId: verificationId,
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.resetPasswordPath,
+      name: AppRoutes.resetPasswordPath,
+      builder: (context, state) {
+        final email = state.uri.queryParameters[AuthNavKeys.email] ?? '';
+        final otpCode = state.uri.queryParameters[AuthNavKeys.otpCode] ?? '';
+        final verificationIdStr = state.uri.queryParameters[AuthNavKeys.verificationId] ?? '0';
+        final verificationId = int.tryParse(verificationIdStr) ?? 0;
+
+        return BlocProvider<ResetPasswordBloc>(
+          create: (context) => serviceLocator<ResetPasswordBloc>(),
+          child: ResetPasswordScreen(
+            email: email,
+            otpCode: otpCode,
             verificationId: verificationId,
           ),
         );

@@ -1,17 +1,15 @@
 import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:chauffeur_hub/core/storage/session_store.dart';
 import 'package:chauffeur_hub/core/utils/result.dart';
 import 'package:chauffeur_hub/core/utils/validators.dart';
-import 'package:chauffeur_hub/core/storage/session_store.dart';
-import 'package:chauffeur_hub/core/storage/session_controller.dart';
 import 'package:chauffeur_hub/features/auth/domain/usecases/login_use_case.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_event.dart';
 import 'package:chauffeur_hub/features/auth/presentation/screens/login/bloc/login_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
     required this._loginUseCase,
-    required this._sessionController,
     required this._store,
     required this._fcmService,
   })  : super(const LoginState()) {
@@ -22,7 +20,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   final LoginUseCase _loginUseCase;
-  final SessionController _sessionController;
   final SessionStore _store;
   final FcmService _fcmService;
 
@@ -101,7 +98,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             errorMessage: error.message,
           ),
         );
-      case Success(:final data):
+      case Success():
         emit(
           state.copyWith(
             status: LoginStatus.success,

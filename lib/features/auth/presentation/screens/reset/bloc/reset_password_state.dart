@@ -1,40 +1,41 @@
-import 'package:equatable/equatable.dart';
 import 'package:chauffeur_hub/core/utils/ui_effect.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../../../../../core/utils/default_values.dart';
 
-enum LoginStatus { initial, loading, success, failure }
+enum ResetPasswordStatus { initial, loading, success, failure }
 
 enum ResetDestination { login }
 
 final class ResetPasswordState extends Equatable {
-  final String password;
-  final String confirmPassword;
-  final int confirmationError;
-  final int passwordError;
-  final LoginStatus status;
-  final String errorMessage;
-  final UiEffect effect;
-  final ResetDestination? destination;
-  final int effectId;
 
   const ResetPasswordState({
     this.password = DefaultValues.string,
     this.confirmPassword = DefaultValues.string,
     this.confirmationError = DefaultValues.integer,
     this.passwordError = DefaultValues.integer,
-    this.status = LoginStatus.initial,
+    this.status = ResetPasswordStatus.initial,
     this.errorMessage = DefaultValues.string,
     this.effect = UiEffect.none,
     this.effectId = DefaultValues.integer,
     this.destination,
   });
+  final String password;
+  final String confirmPassword;
+  final int confirmationError;
+  final int passwordError;
+  final ResetPasswordStatus status;
+  final String errorMessage;
+  final UiEffect effect;
+  final ResetDestination? destination;
+  final int effectId;
 
   ResetPasswordState copyWith({
     String? password,
     String? confirmPassword,
     int? confirmationError,
     int? passwordError,
-    LoginStatus? status,
+    ResetPasswordStatus? status,
     String? errorMessage,
     UiEffect? effect,
     int? effectId,

@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class CorePinCodeField extends StatelessWidget {
-  final int length;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onCompleted;
-  final bool isObscured;
-  final String? errorText;
 
   const CorePinCodeField({
     super.key,
@@ -19,6 +13,12 @@ class CorePinCodeField extends StatelessWidget {
     this.isObscured = false,
     this.errorText,
   });
+  final int length;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onCompleted;
+  final bool isObscured;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {

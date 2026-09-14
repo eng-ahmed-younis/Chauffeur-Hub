@@ -1,4 +1,3 @@
-import 'package:chauffeur_hub/core/utils/ui_effect.dart';
 
 enum ForgetPasswordDestination { login, otp  }
 

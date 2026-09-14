@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
-import 'package:chauffeur_hub/core/storage/session_controller.dart';
 import 'package:chauffeur_hub/core/services/network/base/device_metadata.dart';
+import 'package:chauffeur_hub/core/storage/session_controller.dart';
+import 'package:dio/dio.dart';
 
 // ignore_for_file: unused_field
 // ignore_for_file: file_names

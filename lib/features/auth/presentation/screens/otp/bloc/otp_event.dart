@@ -1,4 +1,7 @@
-enum OtpDestination { login }
+enum OtpDestination {
+  login ,
+  resetPassword ,
+}
 
 sealed class OtpEvent {
   const OtpEvent();

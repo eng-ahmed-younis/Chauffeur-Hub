@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+// ignore_for_file: file_names
+
 
 final class SafeLogInterceptor extends Interceptor {
   @override

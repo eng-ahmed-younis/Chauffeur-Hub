@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/extentions/theme_context_extention.dart';
 
 class ForgetPasswordText extends StatelessWidget {
+  const ForgetPasswordText({super.key, required this.onPressed});
 
 
   final VoidCallback onPressed;
-  const ForgetPasswordText({super.key, required this.onPressed});
 
 
 

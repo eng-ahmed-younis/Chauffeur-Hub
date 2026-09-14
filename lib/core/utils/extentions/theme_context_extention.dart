@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:chauffeur_hub/core/theme/app_theme_extension.dart';
+import 'package:flutter/material.dart';
 
 /// Provides convenient access to custom [AppThemeColors]
 /// from the current [Theme] using BuildContext.

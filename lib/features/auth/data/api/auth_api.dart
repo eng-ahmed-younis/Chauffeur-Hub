@@ -1,18 +1,18 @@
-import 'package:dio/dio.dart';
+import 'package:chauffeur_hub/core/services/network/base/api_exception.dart';
+import 'package:chauffeur_hub/core/shared/request/otp_request.dart';
+import 'package:chauffeur_hub/core/shared/request/reset_password.dart';
 import 'package:chauffeur_hub/core/utils/network/api_response_utils.dart';
 import 'package:chauffeur_hub/features/auth/data/api/auth_endpoints.dart';
-import 'package:chauffeur_hub/features/auth/data/dto/login_driver_dto.dart';
-import 'package:chauffeur_hub/core/services/network/base/api_exception.dart';
 import 'package:chauffeur_hub/features/auth/data/dto/forget_password_dto.dart';
+import 'package:chauffeur_hub/features/auth/data/dto/login_driver_dto.dart';
+import 'package:dio/dio.dart';
 
 final class AuthApi {
   AuthApi({
     required this._apexDio,
-    required this._chauffeurDio,
   });
 
   final Dio _apexDio;
-  final Dio _chauffeurDio;
 
   ApiException _handleDioError(DioException e, String fallback) {
     if (e.error is ApiException) {
@@ -37,7 +37,7 @@ final class AuthApi {
     required String deviceToken,
   }) async {
     try {
-      final response = await _apexDio.post(
+      final response = await _apexDio.post<Map<String, dynamic>>(
         AuthEndpoints.login,
         data: {
           'app': 'chauffeur',
@@ -62,7 +62,7 @@ final class AuthApi {
 
   Future<ForgetPasswordDto> requestPasswordForget(String email) async {
     try {
-      final response = await _apexDio.post(
+      final response = await _apexDio.post<Map<String, dynamic>>(
         AuthEndpoints.forgotPassword,
         data: {'email': email},
       );
@@ -81,17 +81,16 @@ final class AuthApi {
   }
 
   Future<void> verifyOtp({
-    required String email,
-    required int verificationId,
-    required int verificationCode,
+    required OtpRequest otpRequest,
   }) async {
     try {
-      final response = await _apexDio.post(
+      final response = await _apexDio.post<Map<String, dynamic>>(
         AuthEndpoints.verifyOtp,
         data: {
-          'email': email,
-          'verification_id': verificationId,
-          'verification_code': verificationCode,
+          'email': otpRequest.email,
+          'verification_id': otpRequest.verificationId,
+          'verification_code': otpRequest.verificationCode,
+          'isCheck': otpRequest.isCheck,
         },
       );
 
@@ -107,21 +106,17 @@ final class AuthApi {
   }
 
   Future<ForgetPasswordDto> resetPassword({
-    required String email,
-    required String otpCode,
-    required int verificationId,
-    required String password,
-    required String confirmPassword,
+    required ResetPassword request,
   }) async {
     try {
-      final response = await _apexDio.post(
+      final response = await _apexDio.post<Map<String, dynamic>>(
         AuthEndpoints.resetPassword,
         data: {
-          'email': email,
-          'otp_code': otpCode,
-          'verification_id': verificationId,
-          'password': password,
-          'confirm_password': confirmPassword,
+          'email': request.email,
+          'otp_code': request.otpCode,
+          'verification_id': request.verificationId,
+          'password': request.password,
+          'confirm_password': request.confirmPassword,
         },
       );
 

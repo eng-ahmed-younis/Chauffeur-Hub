@@ -1,8 +1,7 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
 import '../base/api_exception.dart';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 final class ConnectionInterceptor extends Interceptor {
   const ConnectionInterceptor(this._connectivity);

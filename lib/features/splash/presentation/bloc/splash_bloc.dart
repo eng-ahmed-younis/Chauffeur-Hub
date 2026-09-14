@@ -1,20 +1,18 @@
 import 'dart:async';
 
-import 'splash_event.dart';
-import 'splash_state.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/models/splash_models.dart';
-import '../../../../core/storage/session_controller.dart';
-import '../../domain/use_case/get_settings_use_case.dart';
-import '../../domain/use_case/check_app_update_use_case.dart';
-import '../../domain/use_case/get_driver_status_use_case.dart';
-import '../../../../core/shared/domain/models/driver_status.dart';
-import '../../../../core/services/network/base/error_message.dart';
-
 import 'package:chauffeur_hub/core/services/notification/fcm_service.dart';
 import 'package:chauffeur_hub/core/storage/session_store.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/services/network/base/error_message.dart';
+import '../../../../core/shared/domain/models/driver_status.dart';
+import '../../../../core/storage/session_controller.dart';
+import '../../domain/models/splash_models.dart';
+import '../../domain/use_case/check_app_update_use_case.dart';
+import '../../domain/use_case/get_driver_status_use_case.dart';
+import '../../domain/use_case/get_settings_use_case.dart';
+import 'splash_event.dart';
+import 'splash_state.dart';
 
 export 'splash_event.dart';
 export 'splash_state.dart';
@@ -55,11 +53,11 @@ final class SplashBloc extends Bloc<SplashEvent, SplashState> {
     emit(state.copyWith(isLoading: true));
 
     // Fetch and save FCM Token asynchronously in SessionStore on splash screen
-    fcmService.getFcmToken().then((token) {
+    unawaited(fcmService.getFcmToken().then((token) async {
       if (token != null && token.isNotEmpty) {
-        store.saveFcmToken(token);
+        await store.saveFcmToken(token);
       }
-    }).catchError((_) {});
+    }).catchError((_) {}));
 
     // 1. Fast local session restoration (< 10ms)
     await session.restore();

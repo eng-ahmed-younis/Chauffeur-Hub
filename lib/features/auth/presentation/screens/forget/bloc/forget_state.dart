@@ -1,20 +1,12 @@
-import 'package:equatable/equatable.dart';
 import 'package:chauffeur_hub/core/utils/ui_effect.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../../../../../core/utils/default_values.dart';
 import 'forget_event.dart';
 
 enum ForgetPassStatus { initial, loading, success, failure }
 
 final class ForgetState extends Equatable {
-  final String email;
-  final bool isEmailError;
-  final String? emailErrorMessage;
-  final bool isLoading;
-  final int verificationId;
-  final UiEffect effect;
-  final ForgetPasswordDestination? destination;
-  final ForgetPassStatus status;
-  final int effectId;
 
   const ForgetState({
     this.email = DefaultValues.string,
@@ -27,6 +19,15 @@ final class ForgetState extends Equatable {
     this.status = ForgetPassStatus.initial,
     this.effectId = DefaultValues.integer,
   });
+  final String email;
+  final bool isEmailError;
+  final String? emailErrorMessage;
+  final bool isLoading;
+  final int verificationId;
+  final UiEffect effect;
+  final ForgetPasswordDestination? destination;
+  final ForgetPassStatus status;
+  final int effectId;
 
   ForgetState copyWith({
     String? email,

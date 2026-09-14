@@ -4,11 +4,6 @@ import 'package:flutter/material.dart';
 
 /// A luxury custom bottom sheet for displaying error alerts with icon, title, message, and action button.
 class CoreErrorBottomSheet extends StatelessWidget {
-  final String title;
-  final String message;
-  final String buttonText;
-  final VoidCallback? onPressed;
-  final IconData icon;
 
   const CoreErrorBottomSheet({
     super.key,
@@ -18,6 +13,11 @@ class CoreErrorBottomSheet extends StatelessWidget {
     this.onPressed,
     this.icon = Icons.error_outline_rounded,
   });
+  final String title;
+  final String message;
+  final String buttonText;
+  final VoidCallback? onPressed;
+  final IconData icon;
 
   /// Static helper to display the error bottom sheet easily from any BuildContext.
   static Future<T?> show<T>(
