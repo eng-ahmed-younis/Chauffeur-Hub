@@ -1,16 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chauffeur_hub/core/utils/extentions/theme_context_extention.dart';
+import 'package:flutter/material.dart';
 
 class BaseActionButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final bool isLoading;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final double? height;
-  final double? width;
-  final ShapeBorder shape;
 
   // Because BaseActionButton has a const constructor (const BaseActionButton({ ... })),
   // any default values assigned in optional parameters must be compile-time constants.
@@ -27,6 +18,14 @@ class BaseActionButton extends StatelessWidget {
       borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
   });
+  final String text;
+  final VoidCallback onPressed;
+  final bool isLoading;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? height;
+  final double? width;
+  final ShapeBorder shape;
 
   @override
   Widget build(BuildContext context) {

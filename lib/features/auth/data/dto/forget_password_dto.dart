@@ -1,5 +1,5 @@
-final class RecoveryChallengeDto {
-  const RecoveryChallengeDto({
+final class ForgetPasswordDto {
+  const ForgetPasswordDto({
     this.email = '',
     this.firstName = '',
     this.lastName = '',
@@ -7,8 +7,8 @@ final class RecoveryChallengeDto {
     this.verificationId = 0,
   });
 
-  factory RecoveryChallengeDto.fromJson(Map<String, dynamic> json) {
-    return RecoveryChallengeDto(
+  factory ForgetPasswordDto.fromJson(Map<String, dynamic> json) {
+    return ForgetPasswordDto(
       email: (json['email'] as String?) ?? '',
       firstName: (json['first_name'] as String?) ?? '',
       lastName: (json['last_name'] as String?) ?? '',

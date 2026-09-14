@@ -2,19 +2,6 @@ import 'package:chauffeur_hub/core/utils/extentions/theme_context_extention.dart
 import 'package:flutter/material.dart';
 
 class CoreTextField extends StatefulWidget {
-  final String? label;
-  final String? hint;
-  final Color? hintColor;
-  final Color? fillColor;
-  final Color? focusedBorderColor;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final double? height;
-  final double? width;
-  final bool? obscureText;
-  final Widget? suffixIcon;
-  final String? errorText; // Added to support showing an error message
-  final ValueChanged<String>? onChanged;
 
   const CoreTextField({
     super.key,
@@ -32,6 +19,19 @@ class CoreTextField extends StatefulWidget {
     this.errorText, // Allow passing an error text
     this.onChanged,
   });
+  final String? label;
+  final String? hint;
+  final Color? hintColor;
+  final Color? fillColor;
+  final Color? focusedBorderColor;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
+  final double? height;
+  final double? width;
+  final bool? obscureText;
+  final Widget? suffixIcon;
+  final String? errorText; // Added to support showing an error message
+  final ValueChanged<String>? onChanged;
 
   @override
   State<CoreTextField> createState() => _CoreTextFieldState();

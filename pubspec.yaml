@@ -53,6 +53,10 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.12.0
   flutter_svg: ^2.1.0
+  pin_code_fields: ^8.0.1
+  google_maps_flutter: ^2.18.0
+  geolocator: ^13.0.2
+  google_maps_flutter_android: ^2.19.13
 
 dev_dependencies:
   flutter_test:

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Fetches platform and device metadata for HTTP headers & analytics.

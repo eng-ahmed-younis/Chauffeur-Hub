@@ -1,5 +1,5 @@
-final class RecoveryChallenge {
-  const RecoveryChallenge({
+final class ForgetPassword {
+  const ForgetPassword({
     this.email = '',
     this.firstName = '',
     this.lastName = '',

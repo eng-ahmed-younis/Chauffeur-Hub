@@ -1,5 +1,6 @@
-import 'color/app_colors.dart';
 import 'package:flutter/material.dart';
+
+import 'color/app_colors.dart';
 
 
 @immutable

@@ -1,8 +1,9 @@
-import '../core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../core/services/di/service_locator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
+import '../core/services/di/service_locator.dart';
+import '../core/theme/app_theme.dart';
 
 
 
@@ -24,7 +25,7 @@ final class ChauffeurApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          title: "Chauffeur Hub",
+          title: 'Chauffeur Hub',
           themeMode: ThemeMode.system,
           routerConfig: serviceLocator<GoRouter>(),
           builder: (context, child) => child ?? const SizedBox.shrink(),

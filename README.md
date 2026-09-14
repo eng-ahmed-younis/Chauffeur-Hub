@@ -68,6 +68,8 @@ lib/
 │   │       │   ├── request_metadat_aInterceptor.dart # Device headers interceptor
 │   │       │   └── safe_log_Interceptor.dart      # Safe HTTP logger
 │   │       ├── dio_factory.dart        # Dio HTTP client factory & interceptors
+│   │   ├── notification/
+│   │   │   └── fcm_service.dart        # Firebase Cloud Messaging service
 │   │   └── shared/
 │   │       ├── data/
 │   │       │   ├── dto/
@@ -161,7 +163,64 @@ lib/
 
 ## 🏗️ System Architecture Diagrams
 
-### 1. High-Level Architecture & Flow
+### 1. App Startup Sequence & Dependency Injection Flow
+This sequence demonstrates the initialization timeline from the moment the user taps the app icon, through dependency injection registration, to the Splash screen.
+
+```mermaid
+flowchart TD
+    subgraph Launch ["1. App Launch & Env Config"]
+        User(["📱 User Taps App Icon"]) --> OS["Mobile OS"]
+        OS --> Main["main() in main_flavors"]
+        Main --> InitBind["WidgetsFlutterBinding.ensureInitialized()"]
+        InitBind --> SysUI["SystemChrome (UI & Orientation Config)"]
+    end
+
+    subgraph DI ["2. Dependency Injection Phase (GetIt)"]
+        SysUI --> ConfigDI["configureDependencies()"]
+        
+        ConfigDI --> EnvLoad["AppEnvironment.fromDefines()<br>• Reads --dart-define / .env<br>• Resolves AppFlavor (dev/staging/uat/prod)<br>• Sets Base URLs & API Keys"]
+        
+        EnvLoad --> CoreMod["initCoreModule()<br>• Registers AppEnvironment Singleton<br>• Firebase Init<br>• SharedPreferences & SecureStorage<br>• SessionController & SessionStore<br>• FcmService"]
+        
+        CoreMod --> NetMod["initNetworkModule()<br>• DioFactory (injects AppEnvironment)<br>• Multi-target Dio Clients (chauffeur, settings, apex)"]
+        
+        NetMod --> RepoMod["initRepositoryModule()<br>• AuthRepository & SplashRepository"]
+        RepoMod --> UCMod["initUseCaseModule()<br>• LoginUseCase, GetSettingsUseCase, etc."]
+        UCMod --> BlocMod["initBlocModule()<br>• SplashBloc, LoginBloc, ForgetBloc"]
+        BlocMod --> NavMod["initNavigationModule()<br>• GoRouter setup with SessionController guard"]
+    end
+
+    subgraph AppRun ["3. App Mounting & Navigation"]
+        NavMod --> RunApp["runApp(ChauffeurApp)"]
+        RunApp --> ScreenUtil["ScreenUtilInit (Responsive Canvas)"]
+        ScreenUtil --> MatApp["MaterialApp.router"]
+        MatApp --> RouterEval["GoRouter Evaluates Route"]
+        RouterEval -->|initialLocation: /splash| SplashUI["SplashScreen Mounted"]
+    end
+
+    subgraph SplashExec ["4. Splash BLoC Execution"]
+        SplashUI --> SplashBlocEv["SplashBloc.add(SplashStarted)"]
+        SplashBlocEv --> FCM["FcmService.getFcmToken() (Background)"]
+        SplashBlocEv --> Restore["session.restore() (Reads local storage)"]
+        SplashBlocEv --> Settings["getSettingsUseCase() & checkAppUpdateUseCase()"]
+        SplashBlocEv --> Status["getDriverStatusUseCase()"]
+    end
+
+    %% Styling
+    classDef launch fill:#0B132B,stroke:#4A90E2,stroke-width:2px,color:#FFFFFF;
+    classDef di fill:#2B2D42,stroke:#8D99AE,stroke-width:2px,color:#FFFFFF;
+    classDef app fill:#131952,stroke:#D4AF37,stroke-width:2px,color:#FFFFFF;
+    classDef exec fill:#1C2541,stroke:#00B4D8,stroke-width:2px,color:#FFFFFF;
+
+    class User,OS,Main,InitBind,SysUI launch;
+    class ConfigDI,EnvLoad,CoreMod,NetMod,RepoMod,UCMod,BlocMod,NavMod di;
+    class RunApp,ScreenUtil,MatApp,RouterEval,SplashUI app;
+    class SplashBlocEv,FCM,Restore,Settings,Status exec;
+```
+
+---
+
+### 2. High-Level Architecture & Flow
 
 ```mermaid
 graph TD
@@ -272,7 +331,7 @@ graph TD
 
 ---
 
-### 2. Core Network & Exception Class Diagram
+### 3. Core Network & Exception Class Diagram
 
 ```mermaid
 classDiagram

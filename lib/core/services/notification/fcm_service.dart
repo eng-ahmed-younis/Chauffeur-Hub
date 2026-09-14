@@ -33,7 +33,7 @@ class FcmService {
       final messaging = FirebaseMessaging.instance;
 
       // 1. Request permission for notifications (required for iOS and Android 13+)
-      NotificationSettings settings = await messaging.requestPermission(
+      final NotificationSettings settings = await messaging.requestPermission(
         alert: true,
         announcement: false,
         badge: true,

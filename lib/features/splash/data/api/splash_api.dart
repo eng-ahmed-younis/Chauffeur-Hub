@@ -1,17 +1,15 @@
 import 'package:dio/dio.dart';
-import 'splash_endpoints.dart';
-import '../../domain/models/splash_models.dart';
-import '../../../../core/utils/network/api_response_utils.dart';
-import '../../../../core/shared/data/dto/driver_status_dto.dart';
-import '../../../../core/shared/domain/models/driver_status.dart';
+
 import '../../../../core/services/network/base/device_metadata.dart';
+import '../../../../core/shared/data/dto/driver_status_dto.dart';
 import '../../../../core/shared/data/mappers/driver_status_mapper.dart';
+import '../../../../core/shared/domain/models/driver_status.dart';
+import '../../../../core/utils/network/api_response_utils.dart';
+import '../../domain/models/splash_models.dart';
+import 'splash_endpoints.dart';
 
 
 final class DriverProfile {
-  const DriverProfile({this.status});
-
-  final DriverStatus? status;
 
   factory DriverProfile.fromJson(Map<String, dynamic> json) {
     final statusWire = json['status']?.toString();
@@ -21,6 +19,9 @@ final class DriverProfile {
           : null,
     );
   }
+  const DriverProfile({this.status});
+
+  final DriverStatus? status;
 }
 
 final class SplashApi {

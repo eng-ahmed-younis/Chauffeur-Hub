@@ -1,7 +1,7 @@
-import 'color/app_colors.dart';
-import 'app_theme_extension.dart';
-
 import 'package:flutter/material.dart';
+
+import 'app_theme_extension.dart';
+import 'color/app_colors.dart';
 
 final class AppTheme {
   const AppTheme._();

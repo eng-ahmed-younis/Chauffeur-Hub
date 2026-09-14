@@ -1,6 +1,9 @@
 import 'package:chauffeur_hub/core/utils/result.dart';
+import 'package:chauffeur_hub/features/auth/domain/models/forget_password.dart';
 import 'package:chauffeur_hub/features/auth/domain/models/login_driver.dart';
-import 'package:chauffeur_hub/features/auth/domain/models/recovery_challenge.dart';
+
+import '../../../../core/shared/request/otp_request.dart';
+import '../../../../core/shared/request/reset_password.dart';
 
 abstract interface class AuthRepository {
   Future<Result<LoginDriver>> login({
@@ -9,19 +12,13 @@ abstract interface class AuthRepository {
     required String deviceToken,
   });
 
-  Future<Result<RecoveryChallenge>> requestPasswordReset(String email);
+  Future<Result<ForgetPassword>> forgetPasswordRequest(String email);
 
   Future<Result<void>> verifyOtp({
-    required String email,
-    required int verificationId,
-    required int verificationCode,
+    required OtpRequest otpRequest,
   });
 
-  Future<Result<RecoveryChallenge>> resetPassword({
-    required String email,
-    required String otpCode,
-    required int verificationId,
-    required String password,
-    required String confirmPassword,
+  Future<Result<ForgetPassword>> resetPassword({
+    required ResetPassword request,
   });
 }

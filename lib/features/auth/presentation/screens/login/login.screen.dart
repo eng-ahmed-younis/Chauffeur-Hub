@@ -1,18 +1,20 @@
+import 'dart:async';
+
 import 'package:chauffeur_hub/core/services/navigation/app_routes.dart';
+import 'package:chauffeur_hub/core/widgets/base_action_button.dart';
+import 'package:chauffeur_hub/core/widgets/core_error_bottom_sheet.dart';
+import 'package:chauffeur_hub/core/widgets/core_text_field.dart';
+import 'package:chauffeur_hub/features/auth/presentation/widgets/forget_password_text.dart';
+import 'package:chauffeur_hub/features/auth/presentation/widgets/login_welcome_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/theme/system/app_system_bar.dart';
-import 'package:chauffeur_hub/core/widgets/core_Text_field.dart';
-import 'package:chauffeur_hub/core/widgets/base_action_button.dart';
 import '../../../../../core/utils/extentions/theme_context_extention.dart';
-import 'package:chauffeur_hub/features/auth/presentation/widgets/login_welcome_text.dart';
-import 'package:chauffeur_hub/features/auth/presentation/widgets/forget_password_text.dart';
-
 import 'bloc/login_bloc.dart';
 import 'bloc/login_event.dart';
 import 'bloc/login_state.dart';
@@ -40,14 +42,16 @@ class _LoginScreenState extends State<LoginScreen> {
     if (state.effect == LoginEffect.openHome) {
       context.go(AppRoutes.home);
     } else if (state.effect == LoginEffect.openForgotPassword) {
-      context.push(AppRoutes.forgotPassword);
+      unawaited(context.push(AppRoutes.forgotPassword));
     }
 
     // Handle Errors
     if (state.status == LoginStatus.failure && state.errorMessage.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.errorMessage)),
-      );
+      unawaited(CoreErrorBottomSheet.show<void>(
+        context,
+        title: 'Login Failed',
+        message: state.errorMessage,
+      ));
     }
   }
 

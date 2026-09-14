@@ -1,17 +1,16 @@
 import 'dart:convert';
 
-import '../../services/network/base/api_response.dart';
 import '../../services/network/base/api_exception.dart';
+import '../../services/network/base/api_response.dart';
 
 Map<String, dynamic> asMap(Object? value) {
   // couvert dio response data from Map<dynamic, dynamic> to Map<String, dynamic>
   if (value is Map) return Map<String, dynamic>.from(value);
   if (value is String) {
+    if (value.trim().isEmpty) return <String, dynamic>{};
     try {
-      return Map<String, dynamic>.from(
-        // convert json string to Map<String, dynamic> if the string is not empty, otherwise return an empty map
-        value.isNotEmpty ? jsonDecode(value) : <String, dynamic>{},
-      );
+      final decoded = jsonDecode(value);
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
     } catch (_) {
       throw const ApiException.invalidResponse();
     }

@@ -1,36 +1,242 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
+# Use Flutter's official recommended lint rules as the base configuration.
 include: package:flutter_lints/flutter.yaml
 
+# Configure the Dart static analyzer.
+# The analyzer checks your code without running the application.
 analyzer:
+
+  # Enable stricter type checking.
+  language:
+
+    # Prevent unsafe implicit casts.
+    #
+    # Example:
+    # dynamic value = 'hello';
+    # int number = value; // Can be reported instead of silently casting.
+    strict-casts: true
+
+    # Require Dart to infer types more strictly.
+    #
+    # Helps detect cases where Dart cannot safely determine a type.
+    strict-inference: true
+
+    # Prevent using generic types without specifying their type.
+    #
+    # Bad:
+    # List items = [];
+    #
+    # Better:
+    # List<String> items = [];
+    strict-raw-types: true
+
+  # Change the severity of specific analyzer problems.
   errors:
-    dead_code: ignore
+
+    # Code that can never execute should be treated as an error.
+    #
+    # Example:
+    # return;
+    # print('Hello'); // Dead code
+    dead_code: error
+
+    # Unused imports should fail analysis.
+    #
+    # Example:
+    # import 'package:flutter/material.dart';
+    # If nothing from this import is used.
+    unused_import: error
+
+    # Show a warning when a local variable is declared but never used.
+    unused_local_variable: warning
+
+    # Invalid type assignments should be treated as errors.
+    #
+    # Example:
+    # int age = '20';
+    invalid_assignment: error
+
+  # Files/folders that should not be analyzed.
   exclude:
+
+    # Flutter generates this directory automatically.
+    # We should not analyze generated build files.
     - build/**
     - android/**
     - ios/**
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+# Configure Dart lint rules.
+#
+# Lints are mainly code-quality, readability,
+# maintainability, and best-practice checks.
+linter:
+
+  rules:
+
+    # ---------------------------------------------------------
+    # Logging / Production
+    # ---------------------------------------------------------
+
+    # Avoid using print() in production code.
+    #
+    # Prefer a logging library instead.
+    avoid_print: true
+
+
+    # ---------------------------------------------------------
+    # Flutter Safety
+    # ---------------------------------------------------------
+
+    # Warn when BuildContext is used after an async operation.
+    #
+    # Bad:
+    #
+    # await loadData();
+    # Navigator.of(context).pop();
+    #
+    # Better:
+    #
+    # await loadData();
+    #
+    # if (!context.mounted) return;
+    #
+    # Navigator.of(context).pop();
+    use_build_context_synchronously: true
+
+
+    # ---------------------------------------------------------
+    # Streams / Resources
+    # ---------------------------------------------------------
+
+    # Make sure StreamSubscription objects are cancelled.
+    #
+    # Helps prevent memory leaks.
+    cancel_subscriptions: true
+
+    # Make sure sinks/controllers are closed when no longer needed.
+    #
+    # Example:
+    # StreamController
+    # IOSink
+    close_sinks: true
+
+
+    # ---------------------------------------------------------
+    # Async / Future Safety
+    # ---------------------------------------------------------
+
+    # Warn when a Future is started but not awaited.
+    #
+    # Example:
+    #
+    # saveData();
+    #
+    # Better:
+    #
+    # await saveData();
+    unawaited_futures: true
+
+    # Detect Futures whose result is completely discarded.
+    #
+    # Useful for finding accidental asynchronous calls.
+    discarded_futures: true
+
+
+    # ---------------------------------------------------------
+    # Code Quality
+    # ---------------------------------------------------------
+
+    # Require functions to explicitly declare their return type.
+    #
+    # Prefer:
+    #
+    # String getName() {}
+    #
+    # Instead of:
+    #
+    # getName() {}
+    always_declare_return_types: true
+
+    # Prefer final for local variables that never change.
+    #
+    # Prefer:
+    #
+    # final name = 'Mohammed';
+    #
+    # Instead of:
+    #
+    # var name = 'Mohammed';
+    prefer_final_locals: true
+
+    # Prefer final for class fields that never change.
+    prefer_final_fields: true
+
+    # Remove unnecessary lambda expressions.
+    #
+    # Prefer:
+    #
+    # onPressed: submit
+    #
+    # Instead of:
+    #
+    # onPressed: () => submit()
+    unnecessary_lambdas: true
+
+    # Detect unnecessary parentheses.
+    #
+    # Example:
+    #
+    # final result = (1 + 2);
+    unnecessary_parenthesis: true
+
+    # Detect statements that do nothing.
+    #
+    # Example:
+    #
+    # user.name;
+    unnecessary_statements: true
+
+
+    # ---------------------------------------------------------
+    # Code Style
+    # ---------------------------------------------------------
+
+    # Prefer single quotes.
+    #
+    # Preferred:
+    #
+    # final name = 'Mohammed';
+    #
+    # Instead of:
+    #
+    # final name = "Mohammed";
+    prefer_single_quotes: true
+
+    # Require trailing commas where appropriate.
+    #
+    # Useful especially for Flutter widgets because
+    # dart format will format the code nicely.
+    #
+    # Example:
+    #
+    # Container(
+    #   width: 100,
+    #   height: 100,
+    # );
+    require_trailing_commas: true
+
+    # Keep imports/exports/parts in the recommended order.
+    directives_ordering: true
+
+    # Prefer constructors before other class members.
+    #
+    # Example:
+    #
+    # class User {
+    #   User();
+    #
+    #   final String name;
+    #
+    #   void save() {}
+    # }
+    sort_constructors_first: true
