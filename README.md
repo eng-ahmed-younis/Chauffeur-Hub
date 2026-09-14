@@ -80,12 +80,17 @@ lib/
 │   │       │   └── mappers/
 │   │       │       ├── driver_status_mapper.dart
 │   │       │       └── location_point_mapper.dart
-│   │       └── domain/
-│   │           ├── models/
-│   │           │   ├── driver_status.dart
-│   │           │   ├── location_point.dart
-│   │           │   └── trip_status.dart
-│   │           └── shared_models.dart  # Shared models barrel file
+│   │       ├── domain/
+│   │       │   ├── models/
+│   │       │   │   ├── driver_status.dart
+│   │       │   │   ├── location_point.dart
+│   │       │   │   └── trip_status.dart
+│   │       │   └── shared_models.dart  # Shared models barrel file
+│   │       └── request/
+│   │           ├── otp_request.dart    # OTP request payload model
+│   │           └── reset_password.dart # Reset password request payload model
+│   │   └── widgets/
+│   │       └── core_map.dart           # Core satellite map widget (Google Maps & Geolocator)
 │   ├── storage/
 │   │   ├── session_controller.dart     # Reactive auth state manager (ChangeNotifier)
 │   │   └── session_store.dart          # Encrypted & local preference session storage
